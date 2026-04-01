@@ -28,7 +28,7 @@ export default function Account() {
   const saveProfile = async () => {
     try {
       const res = await fetch(
-        "http://localhost:5000/api/auth/update-profile",
+  `/api/auth/update-profile`,
         {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
