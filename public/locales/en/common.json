@@ -1,0 +1,21 @@
+{
+  "heroTitle": "Luxury Chauffeur Service",
+  "heroSub": "Premium rides with professional drivers.",
+
+  "oneway": "One way",
+  "hourly": "Hourly",
+  "from": "From",
+  "to": "To",
+  "search": "Search",
+  "calculating": "Calculating...",
+
+  "services": "Our Services",
+
+  "city": "City-to-city rides",
+  "cityDesc": "Travel between cities with comfort and professional chauffeurs.",
+
+  "airport": "Airport transfers",
+  "airportDesc": "Reliable airport pickups and drop-offs with flight tracking.",
+
+  "hourlyDesc": "Book a chauffeur by the hour for maximum flexibility."
+}

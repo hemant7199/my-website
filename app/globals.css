@@ -1,0 +1,27 @@
+/* ✅ TAILWIND (MOST IMPORTANT) */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ✅ ROOT COLORS */
+:root {
+  --background: #ffffff;
+  --foreground: #171717;
+}
+
+/* ✅ DARK MODE */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #0a0a0a;
+    --foreground: #ededed;
+  }
+}
+
+/* ✅ GLOBAL BODY STYLES */
+body {
+  background-color: var(--background);
+  color: var(--foreground);
+  font-family: system-ui, Arial, Helvetica, sans-serif;
+  margin: 0;
+  padding: 0;
+}
