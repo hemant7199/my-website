@@ -33,10 +33,10 @@ const bookingSchema = new mongoose.Schema(
     },
 
     paymentType: {
-      type: String,
-      enum: ["unpaid", "cash", "online"],
-      default: "unpaid",
-    },
+  type: String,
+  enum: ["unpaid", "cash", "upi", "card"],
+  default: "unpaid",
+},
   },
   { timestamps: true }
 );

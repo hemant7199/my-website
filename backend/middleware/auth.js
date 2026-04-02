@@ -1,6 +1,5 @@
 const jwt = require("jsonwebtoken");
 
-// USER AUTH
 const auth = (req, res, next) => {
   const authHeader = req.headers.authorization;
 
@@ -13,7 +12,11 @@ const auth = (req, res, next) => {
     : authHeader;
 
   try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET || "secret");
+    if (!process.env.JWT_SECRET) {
+      throw new Error("JWT_SECRET missing");
+    }
+
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
     req.user = decoded;
     next();
@@ -23,7 +26,6 @@ const auth = (req, res, next) => {
   }
 };
 
-// ADMIN AUTH
 const verifyAdmin = (req, res, next) => {
   const authHeader = req.headers.authorization;
 
@@ -36,7 +38,11 @@ const verifyAdmin = (req, res, next) => {
     : authHeader;
 
   try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET || "secret");
+    if (!process.env.JWT_SECRET) {
+      throw new Error("JWT_SECRET missing");
+    }
+
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
     if (decoded.role !== "admin") {
       return res.status(403).json({ message: "Access denied" });
@@ -50,5 +56,4 @@ const verifyAdmin = (req, res, next) => {
   }
 };
 
-// ✅ FIX EXPORT
 module.exports = { auth, verifyAdmin };

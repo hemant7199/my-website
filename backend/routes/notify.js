@@ -22,8 +22,10 @@ router.post("/send-driver-email", async (req, res) => {
       },
     });
 
-const acceptLink = `http://192.168.18.44:3000/driver-response?status=accepted&id=${booking._id}`;
-const rejectLink = `http://192.168.18.44:3000/driver-response?status=rejected&id=${booking._id}`;
+const FRONTEND_URL = process.env.FRONTEND_URL;
+
+const acceptLink = `${FRONTEND_URL}/driver-response?status=accepted&id=${booking._id}`;
+const rejectLink = `${FRONTEND_URL}/driver-response?status=rejected&id=${booking._id}`;
 
    const mailOptions = {
   from: process.env.EMAIL_USER,

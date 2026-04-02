@@ -1,9 +1,7 @@
-const API_URL = "http://localhost:5000/api";
-
-// ✅ SIGNUP
+const API_URL = process.env.NEXT_PUBLIC_API_URL;// ✅ SIGNUP
 export const signupUser = async (data: any) => {
   try {
-    const res = await fetch(`${API_URL}/auth/signup`, {
+    const res = await fetch(`${API_URL}/api/auth/send-otp`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(data),
@@ -18,7 +16,7 @@ export const signupUser = async (data: any) => {
 // ✅ LOGIN
 export const loginUser = async (data: any) => {
   try {
-    const res = await fetch(`${API_URL}/auth/login`, {
+    const res = await fetch(`${API_URL}/api/auth/login`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(data),
@@ -43,7 +41,7 @@ export const createBooking = async (data: any) => {
   try {
     const token = localStorage.getItem("token");
 
-    const res = await fetch(`${API_URL}/booking/create`, {
+    const res = await fetch(`${API_URL}/api/booking/create`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -64,7 +62,7 @@ export const getBookings = async () => {
   try {
     const token = localStorage.getItem("token");
 
-    const res = await fetch(`${API_URL}/booking/all`, {
+    const res = await fetch(`${API_URL}/api/booking/admin/all`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -82,7 +80,7 @@ export const deleteBooking = async (id: string) => {
   try {
     const token = localStorage.getItem("token");
 
-    const res = await fetch(`${API_URL}/booking/${id}`, {
+    const res = await fetch(`${API_URL}/api/booking/admin/${id}`, {
       method: "DELETE",
       headers: {
         Authorization: `Bearer ${token}`,

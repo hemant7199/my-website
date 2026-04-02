@@ -5,7 +5,7 @@ const userSchema = new mongoose.Schema({
 
   password: {
     type: String,
-    default: null, // ✅ IMPORTANT
+    default: null,
   },
 
   firstName: String,
@@ -19,5 +19,10 @@ const userSchema = new mongoose.Schema({
 
   otp: String,
 });
+
+// ✅ FIX EXPORT
+module.exports =
+  mongoose.models.User ||
+  mongoose.model("User", userSchema);
 
 module.exports = mongoose.model("User", userSchema);
