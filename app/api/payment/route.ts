@@ -1,6 +1,10 @@
 import Stripe from "stripe";
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
+if (!process.env.STRIPE_SECRET_KEY) {
+  throw new Error("Missing STRIPE_SECRET_KEY");
+}
+
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
 export async function POST(req: Request) {
   try {
@@ -23,8 +27,8 @@ export async function POST(req: Request) {
         },
       ],
       mode: "payment",
-      success_url: "http://localhost:3000/success",
-      cancel_url: "http://localhost:3000",
+      success_url: "https://my-website-dun-xi.vercel.app/success",
+      cancel_url: "https://my-website-dun-xi.vercel.app",
     });
 
     return Response.json({ url: session.url });
