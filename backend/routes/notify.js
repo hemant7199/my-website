@@ -12,6 +12,7 @@ router.post("/send-driver-email", async (req, res) => {
     const { booking } = req.body;
 
     if (!booking) {
+      console.log("❌ No booking data");
       return res.status(400).json({ error: "No booking data" });
     }
 
@@ -20,26 +21,39 @@ router.post("/send-driver-email", async (req, res) => {
     const acceptLink = `${FRONTEND_URL}/driver-response?status=accepted&id=${booking._id}`;
     const rejectLink = `${FRONTEND_URL}/driver-response?status=rejected&id=${booking._id}`;
 
-    await resend.emails.send({
-      from: "onboarding@resend.dev",
+    // ✅ SEND EMAIL USING RESEND
+    const response = await resend.emails.send({
+      from: "onboarding@resend.dev", // ⚠️ testing sender
       to: "blackline402@gmail.com", // driver email
       subject: "🚖 New Ride Request",
       html: `
-        <h2>New Ride Request</h2>
-        <p><b>${booking.from} → ${booking.to}</b></p>
-        <p>Date: ${booking.date}</p>
-        <p>Time: ${booking.time}</p>
+        <h2>🚖 New Ride Request</h2>
 
-        <p><b>Passenger:</b></p>
-        <p>${booking.name} (${booking.phone})</p>
+        <p><b>From:</b> ${booking.from}</p>
+        <p><b>To:</b> ${booking.to}</p>
+        <p><b>Date:</b> ${booking.date}</p>
+        <p><b>Time:</b> ${booking.time}</p>
+
+        <h3>Passenger</h3>
+        <p><b>Name:</b> ${booking.name}</p>
+        <p><b>Phone:</b> ${booking.phone}</p>
+        <p><b>Email:</b> ${booking.email || "Not provided"}</p>
 
         <br/>
-        <a href="${acceptLink}">✅ Accept</a><br/>
-        <a href="${rejectLink}">❌ Reject</a>
+
+        <a href="${acceptLink}" style="padding:10px 15px;background:green;color:white;text-decoration:none;">
+          ✅ Accept
+        </a>
+
+        <br/><br/>
+
+        <a href="${rejectLink}" style="padding:10px 15px;background:red;color:white;text-decoration:none;">
+          ❌ Reject
+        </a>
       `,
     });
 
-    console.log("✅ EMAIL SENT SUCCESSFULLY");
+    console.log("✅ EMAIL SENT:", response);
 
     res.json({ message: "Email sent to driver" });
 
