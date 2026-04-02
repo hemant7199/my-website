@@ -2,7 +2,7 @@ const { Resend } = require("resend");
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
-// OTP EMAIL
+// ================= OTP EMAIL =================
 const sendOtpEmail = async (to, otp) => {
   try {
     await resend.emails.send({
@@ -11,10 +11,10 @@ const sendOtpEmail = async (to, otp) => {
       subject: "Your OTP Code 🔐",
       html: `
         <h2>🔐 OTP Verification</h2>
+        <p>Your OTP code is:</p>
         <h1>${otp}</h1>
       `,
     });
-    
 
     console.log("✅ OTP sent");
   } catch (err) {
@@ -23,7 +23,7 @@ const sendOtpEmail = async (to, otp) => {
   }
 };
 
-// BOOKING EMAIL
+// ================= BOOKING EMAIL =================
 const sendBookingEmail = async (to, booking) => {
   try {
     await resend.emails.send({
@@ -31,8 +31,10 @@ const sendBookingEmail = async (to, booking) => {
       to,
       subject: "Booking Confirmed 🚗",
       html: `
-        <h2>Ride Confirmed</h2>
-        <p>${booking.from} → ${booking.to}</p>
+        <h2>🚗 Ride Confirmed</h2>
+        <p><b>${booking.from} → ${booking.to}</b></p>
+        <p>Date: ${booking.date}</p>
+        <p>Time: ${booking.time}</p>
       `,
     });
 
