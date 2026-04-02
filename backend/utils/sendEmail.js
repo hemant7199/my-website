@@ -14,6 +14,7 @@ const sendOtpEmail = async (to, otp) => {
         <h1>${otp}</h1>
       `,
     });
+    
 
     console.log("✅ OTP sent");
   } catch (err) {
