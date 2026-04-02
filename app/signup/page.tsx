@@ -1,9 +1,11 @@
 "use client";
 
+
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 
 export default function Signup() {
+  const API_URL = process.env.NEXT_PUBLIC_API_URL;
   const router = useRouter();
 
   const [step, setStep] = useState(1);
@@ -34,7 +36,7 @@ export default function Signup() {
     try {
       setLoading(true);
 
-      const res = await fetch(`/api/auth/send-otp`, {
+      const res = await fetch(`${API_URL}/api/auth/send-otp`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -64,7 +66,7 @@ export default function Signup() {
     try {
       setLoading(true);
 
-      const res = await fetch(`/api/auth/send-otp`, {
+      const res = await fetch(`${API_URL}/api/auth/verify-otp`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -100,7 +102,7 @@ export default function Signup() {
 
       
 
-      const res = await fetch(`/api/auth/set-password`, {
+      const res = await fetch(`${API_URL}/api/auth/set-password`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -139,7 +141,7 @@ if (!stored) {
         return;
       }
 
-      const bookingRes = await fetch(`/api/booking/create`, {
+      const bookingRes = await fetch(`${API_URL}/api/booking/create`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
