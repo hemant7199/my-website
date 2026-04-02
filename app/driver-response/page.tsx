@@ -2,6 +2,7 @@
 
 import { Suspense, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
+const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
 function DriverContent() {
   const params = useSearchParams();
@@ -10,8 +11,7 @@ function DriverContent() {
   const id = params.get("id");
 
   // ✅ FIX: API fallback
-  const API_URL =
-    process.env.NEXT_PUBLIC_API_URL || "http://192.168.18.44:3000";
+  
 
   useEffect(() => {
     const updateStatus = async () => {

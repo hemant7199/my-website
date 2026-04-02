@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
 export default function Forgot() {
   const [step, setStep] = useState(1);
@@ -23,7 +24,7 @@ export default function Forgot() {
     try {
       setLoading(true);
 
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/auth/forgot-password`, {
+      const res = await fetch(`${API_URL}/api/auth/forgot-password`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -60,7 +61,7 @@ export default function Forgot() {
     try {
       setLoading(true);
 
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/auth/reset-password`, {
+      const res = await fetch(`${API_URL}/api/auth/reset-password`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -97,7 +98,7 @@ export default function Forgot() {
 
       <div className="bg-white p-8 rounded-xl shadow max-w-md w-full">
 
-        <h1 className="text-3xl font-bold mb-2">BarcaLux</h1>
+        <h1 className="text-3xl font-bold mb-2">BLACKLINE</h1>
 
         {/* STEP 1 */}
         {step === 1 && (

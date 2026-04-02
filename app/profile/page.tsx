@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
 export default function Profile() {
   const [form, setForm] = useState({
@@ -21,7 +22,7 @@ export default function Profile() {
   }, []);
 
   const save = async () => {
-    await fetch("http://localhost:5000/api/auth/add-profile", {
+    await fetch(`${API_URL}/api/auth/add-profile`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

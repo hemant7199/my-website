@@ -6,18 +6,17 @@ export default function Driver() {
   const [rides, setRides] = useState<any[]>([]);
 
   useEffect(() => {
-    fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/bookings`)
+    fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/booking/admin/all`)
       .then((res) => res.json())
       .then((data) => setRides(data));
   }, []);
 
   const acceptRide = async (id: string) => {
-    await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/bookings/${id}`,
-    {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ status: "accepted" }),
-    });
+    await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/booking/driver/${id}`, {
+  method: "PUT",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({ status: "confirmed" }),
+});
 
     setRides(
       rides.map((r) =>
