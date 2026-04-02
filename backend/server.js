@@ -17,7 +17,6 @@ mongoose.connect(process.env.MONGO_URI)
 // ================= ROUTES =================
 const authRoutes = require("./routes/auth");
 const bookingRoutes = require("./routes/booking");
-const paymentRoutes = require("./routes/payment");
 const adminRoutes = require("./routes/admin");
 
 // 🔥 NEW (IMPORTANT)
@@ -25,7 +24,6 @@ const notifyRoutes = require("./routes/notify");
 
 app.use("/api/auth", authRoutes);
 app.use("/api/booking", bookingRoutes);
-app.use("/api/payment", paymentRoutes);
 app.use("/api/admin", adminRoutes);
 
 // 🔥 ADD THIS LINE
