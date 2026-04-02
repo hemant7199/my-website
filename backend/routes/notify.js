@@ -1,6 +1,8 @@
 const express = require("express");
 const router = express.Router();
-const nodemailer = require("nodemailer");
+const { Resend } = require("resend");
+
+const resend = new Resend(process.env.RESEND_API_KEY);
 
 // ✅ SEND EMAIL TO DRIVER
 router.post("/send-driver-email", async (req, res) => {
@@ -10,46 +12,32 @@ router.post("/send-driver-email", async (req, res) => {
     const { booking } = req.body;
 
     if (!booking) {
-      console.log("❌ No booking data");
       return res.status(400).json({ error: "No booking data" });
     }
 
-    const transporter = nodemailer.createTransport({
-      service: "gmail",
-      auth: {
-        user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASS,
-      },
-    });
+    const FRONTEND_URL = process.env.FRONTEND_URL;
 
-const FRONTEND_URL = process.env.FRONTEND_URL;
+    const acceptLink = `${FRONTEND_URL}/driver-response?status=accepted&id=${booking._id}`;
+    const rejectLink = `${FRONTEND_URL}/driver-response?status=rejected&id=${booking._id}`;
 
-const acceptLink = `${FRONTEND_URL}/driver-response?status=accepted&id=${booking._id}`;
-const rejectLink = `${FRONTEND_URL}/driver-response?status=rejected&id=${booking._id}`;
+    await resend.emails.send({
+      from: "onboarding@resend.dev",
+      to: "blackline402@gmail.com", // driver email
+      subject: "🚖 New Ride Request",
+      html: `
+        <h2>New Ride Request</h2>
+        <p><b>${booking.from} → ${booking.to}</b></p>
+        <p>Date: ${booking.date}</p>
+        <p>Time: ${booking.time}</p>
 
-   const mailOptions = {
-  from: process.env.EMAIL_USER,
-  to: "blackline402@gmail.com", // your email ✅ comma added
-  subject: "🚖 New Ride Request",
-  text: `
-New Ride Request
+        <p><b>Passenger:</b></p>
+        <p>${booking.name} (${booking.phone})</p>
 
-From: ${booking.from}
-To: ${booking.to}
-Date: ${booking.date}
-Time: ${booking.time}
-
-Passenger:
-Name: ${booking.name}
-Phone: ${booking.phone}
-Email: ${booking.email || "Not provided"} 
-
-Accept: ${acceptLink}
-Reject: ${rejectLink}
+        <br/>
+        <a href="${acceptLink}">✅ Accept</a><br/>
+        <a href="${rejectLink}">❌ Reject</a>
       `,
-    };
-
-    await transporter.sendMail(mailOptions);
+    });
 
     console.log("✅ EMAIL SENT SUCCESSFULLY");
 
