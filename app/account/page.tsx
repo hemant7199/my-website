@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
 export default function Account() {
   const [user, setUser]: any = useState(null);
@@ -28,7 +29,7 @@ export default function Account() {
   const saveProfile = async () => {
     try {
       const res = await fetch(
-  `/api/auth/update-profile`,
+        `${API_URL}/api/auth/update-profile`, 
         {
           method: "PUT",
           headers: { "Content-Type": "application/json" },

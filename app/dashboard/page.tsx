@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
 export default function Dashboard() {
   const [bookings, setBookings] = useState<any[]>([]);
@@ -18,7 +19,7 @@ export default function Dashboard() {
       return;
     }
 
-    fetch("http://localhost:5000/api/booking/my", {
+    fetch(`${API_URL}/api/booking/my`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },

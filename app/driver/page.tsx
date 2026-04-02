@@ -20,7 +20,7 @@ export default function Driver() {
 
     setRides(
       rides.map((r) =>
-        r._id === id ? { ...r, status: "accepted" } : r
+        r._id === id ? { ...r, status: "confirmed" } : r
       )
     );
   };

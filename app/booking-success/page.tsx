@@ -2,6 +2,8 @@
 
 import { useEffect, useState } from "react";
 
+const API_URL = process.env.NEXT_PUBLIC_API_URL;
+
 export default function Success() {
   const [booking, setBooking] = useState<any>(null);
 
@@ -13,7 +15,7 @@ export default function Success() {
       setBooking(parsed);
 
       // ✅ AUTO SEND EMAIL TO DRIVER
-      fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/notify/send-driver-email`, {
+      fetch(`${API_URL}/api/notify/send-driver-email`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -22,7 +24,7 @@ export default function Success() {
       });
 
       // ✅ AUTO WHATSAPP OPEN
-      const driverPhone = "34600123456";
+      const driverPhone = "34632069135";
 
       const msg = encodeURIComponent(
         `🚖 New Ride Request
@@ -44,8 +46,7 @@ Phone: ${parsed.phone}`
       // 🔥🔥🔥 FIX: AUTO STATUS REFRESH
       const interval = setInterval(async () => {
         try {
-          const res = await fetch(
-            `${process.env.NEXT_PUBLIC_API_URL}/api/booking/my`,        
+          const res = await fetch(`${API_URL}/api/booking/my`,         
               {
               headers: {
                 Authorization: `Bearer ${localStorage.getItem("token")}`,

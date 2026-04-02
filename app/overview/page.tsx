@@ -19,7 +19,7 @@ export default function OverviewPage() {
           </h1>
 
           <p className="text-gray-400 text-lg max-w-2xl mx-auto mb-2">
-            BarcaLux Chauffeur Service
+            BLACKLINE Chauffeur Service
           </p>
 
           <p className="text-gray-500 text-lg max-w-2xl mx-auto leading-relaxed">
@@ -128,8 +128,9 @@ export default function OverviewPage() {
                 If you face any issue, contact our support team anytime.
               </p>
               <p className="text-sm mt-2">
-                📞 +34 600 123 456 <br />
-                📧 support@barcalux.com
+                📞 +34 632 069 135
+                 <br />
+                📧 blackline402@gmail.com
               </p>
             </div>
 

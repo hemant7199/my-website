@@ -4,6 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { signInWithPopup } from "firebase/auth";
 import { auth, googleProvider, facebookProvider } from "@/utils/firebase";
+const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
 export default function Login() {
   const [step, setStep] = useState<"email" | "password">("email");
@@ -27,7 +28,7 @@ export default function Login() {
     try {
       setLoading(true);
 
-      const res = await fetch(`/api/auth/check-email`, {
+      const res = await fetch(`${API_URL}/api/auth/check-email`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -70,7 +71,7 @@ export default function Login() {
           return;
         }
 
-        const res = await fetch(`/api/booking/create`, {
+        const res = await fetch(`${API_URL}/api/booking/create`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -106,7 +107,7 @@ export default function Login() {
     try {
       setLoading(true);
 
-      const res = await fetch(`/api/auth/login`, {
+      const res = await fetch(`${API_URL}/api/auth/login`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -142,7 +143,7 @@ export default function Login() {
       const result = await signInWithPopup(auth, googleProvider);
       const user = result.user;
 
-      const res = await fetch(`/api/auth/login`, {
+      const res = await fetch(`${API_URL}/api/auth/login`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -172,7 +173,7 @@ export default function Login() {
       const result = await signInWithPopup(auth, facebookProvider);
       const user = result.user;
 
-      const res = await fetch(`/api/auth/login`, {
+      const res = await fetch(`${API_URL}/api/auth/login`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

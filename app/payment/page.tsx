@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useLanguage } from "../../utils/LanguageContext";
 
 export default function Payment() {
+  const API_URL = process.env.NEXT_PUBLIC_API_URL;
   const { t } = useLanguage();
   const [paymentType, setPaymentType] = useState("");
   const [error, setError] = useState("");
@@ -42,11 +43,9 @@ export default function Payment() {
       setLoading(true);
 
       // ✅ FIX: API fallback (CRITICAL)
-      const API_URL =
-        process.env.NEXT_PUBLIC_API_URL || "http://192.168.18.44:3000";
+      
 
-      const res = await fetch(
-        `${API_URL}/api/booking/pay/${bookingId}`,
+      const res = await fetch(`${API_URL}/api/booking/pay/${bookingId}`, 
         {
           method: "PUT",
           headers: {
@@ -57,7 +56,14 @@ export default function Payment() {
         }
       );
 
-      const data = await res.json();
+      let data;
+
+try {
+  data = await res.json();
+} catch {
+  setError("Invalid server response");
+  return;
+}
       console.log("Payment Response:", data);
 
       if (!res.ok) {

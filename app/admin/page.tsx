@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
 export default function Admin() {
   const [bookings, setBookings] = useState<any[]>([]);
@@ -19,7 +20,7 @@ export default function Admin() {
   useEffect(() => {
     const token = localStorage.getItem("token");
 
-    fetch("http://localhost:5000/api/bookings", {
+    fetch(`${API_URL}/api/admin/all`, {
       headers: {
         Authorization: token || "",
       },
@@ -44,7 +45,7 @@ export default function Admin() {
     const confirmDelete = confirm("Delete this booking?");
     if (!confirmDelete) return;
 
-    await fetch(`http://localhost:5000/api/bookings/${id}`, {
+    await fetch(`${API_URL}/api/admin/${id}`, {
       method: "DELETE",
       headers: {
         Authorization: token || "",
@@ -57,7 +58,7 @@ export default function Admin() {
   const updateStatus = async (id: string, status: string) => {
     const token = localStorage.getItem("token");
 
-    await fetch(`http://localhost:5000/api/bookings/${id}`, {
+    await fetch(`${API_URL}/api/admin/${id}`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",

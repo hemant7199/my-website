@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
 export default function Rides() {
   const [bookings, setBookings] = useState<any[]>([]);
@@ -16,7 +17,7 @@ export default function Rides() {
           return;
         }
 
-        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/booking/my`, {
+        const res = await fetch(`${API_URL}/api/booking/my`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },

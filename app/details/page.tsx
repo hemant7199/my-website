@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import dynamic from "next/dynamic";
 import "react-phone-input-2/lib/style.css";
+const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
 // ✅ Fix: disable SSR for phone input
 const PhoneInput = dynamic(() => import("react-phone-input-2"), {
@@ -81,10 +82,9 @@ export default function Details() {
       setLoading(true);
 
       // ✅ IMPORTANT: change IP if needed
-      const API_URL =
-        process.env.NEXT_PUBLIC_API_URL || "http://192.168.18.44:3000";
+      
 
-      console.log("API URL:", API_URL);
+      console.log("Using internal API route");
       console.log("Sending Data:", finalData);
 
       const res = await fetch(`${API_URL}/api/booking/create`, {
@@ -124,7 +124,7 @@ export default function Details() {
 
       // ✅ better error message
       if (err.message.includes("Failed to fetch")) {
-        setError("Cannot connect to server (check IP / backend)");
+        setError("Server connection failed");
       } else {
         setError("Server error: " + err.message);
       }

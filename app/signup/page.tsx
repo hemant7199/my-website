@@ -3,9 +3,10 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
 export default function Signup() {
-  const API_URL = process.env.NEXT_PUBLIC_API_URL;
+
   const router = useRouter();
 
   const [step, setStep] = useState(1);
