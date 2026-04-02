@@ -1,66 +1,45 @@
-const nodemailer = require("nodemailer");
+const { Resend } = require("resend");
 
-// ✅ CREATE TRANSPORT (ONLY ONCE)
-const transporter = nodemailer.createTransport({
-  host: "smtp.gmail.com",
-  port: 587,
-  secure: false, // IMPORTANT
-  auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS,
-  },
-});
+const resend = new Resend(process.env.RESEND_API_KEY);
 
-// ================= OTP EMAIL =================
+// OTP EMAIL
 const sendOtpEmail = async (to, otp) => {
   try {
-    await transporter.sendMail({
-      from: `"BLACKLINE Chauffeur" <${process.env.EMAIL_USER}>`,
+    await resend.emails.send({
+      from: "onboarding@resend.dev",
       to,
       subject: "Your OTP Code 🔐",
       html: `
         <h2>🔐 OTP Verification</h2>
-        <p>Your OTP code is:</p>
         <h1>${otp}</h1>
-        <p>This code will expire soon.</p>
       `,
     });
 
-    console.log("✅ OTP email sent to:", to);
+    console.log("✅ OTP sent");
   } catch (err) {
-    console.log("❌ OTP email error:", err);
+    console.log("❌ Email error:", err);
     throw err;
   }
 };
 
-// ================= BOOKING EMAIL =================
+// BOOKING EMAIL
 const sendBookingEmail = async (to, booking) => {
   try {
-
-    await transporter.sendMail({
-      from: `"BLACKLINE Chauffeur" <${process.env.EMAIL_USER}>`,
+    await resend.emails.send({
+      from: "onboarding@resend.dev",
       to,
       subject: "Booking Confirmed 🚗",
       html: `
-        <h2>🚗 Your Ride is Confirmed</h2>
-        <p><b>Route:</b> ${booking.from} → ${booking.to}</p>
-        <p><b>Date:</b> ${booking.date}</p>
-        <p><b>Time:</b> ${booking.time}</p>
-        <p><b>Price:</b> €${booking.price}</p>
-        <br/>
-        <p>Thank you for choosing BLACKLINE Chauffeur!</p>
+        <h2>Ride Confirmed</h2>
+        <p>${booking.from} → ${booking.to}</p>
       `,
     });
 
     console.log("✅ Booking email sent");
   } catch (err) {
-    console.log("❌ Booking email error:", err);
+    console.log("❌ Email error:", err);
     throw err;
   }
 };
 
-// ✅ EXPORT CORRECTLY
-module.exports = {
-  sendOtpEmail,
-  sendBookingEmail,
-};
+module.exports = { sendOtpEmail, sendBookingEmail };
