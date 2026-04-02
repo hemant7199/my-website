@@ -16,10 +16,10 @@ router.post("/send-driver-email", async (req, res) => {
       return res.status(400).json({ error: "No booking data" });
     }
 
-    const FRONTEND_URL = process.env.FRONTEND_URL;
+    const FRONTEND_URL = "https://my-website-dun-xi.vercel.app";
 
-    const acceptLink = `${FRONTEND_URL}/driver-response?status=accepted&id=${booking._id}`;
-    const rejectLink = `${FRONTEND_URL}/driver-response?status=rejected&id=${booking._id}`;
+const acceptLink = `${FRONTEND_URL}/driver-response?status=accepted&id=${booking._id}`;
+const rejectLink = `${FRONTEND_URL}/driver-response?status=rejected&id=${booking._id}`;
 
     // ✅ SEND EMAIL USING RESEND
     const response = await resend.emails.send({
