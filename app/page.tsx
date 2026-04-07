@@ -3,7 +3,7 @@ import Image from "next/image";
 import { useRef } from "react";
 import { useState } from "react";
 import Navbar from "../components/Navbar";
-import { getCoordinates, getDistance } from "../utils/maps";
+import { getCoordinates } from "../utils/maps";
 import { useLanguage } from "../utils/LanguageContext";
 
 export default function Home() {
@@ -48,19 +48,20 @@ const dateInputRef = useRef<HTMLInputElement>(null);
 
     const data = await res.json();
 
-// 🔥 FILTER: only show results starting with typed text
-const filtered = data.filter((item: any) => {
-  const name = item.display_name.split(",")[0].toLowerCase();
-  return name.startsWith(query.toLowerCase());
-});
+    const queryLower = query.toLowerCase();
 
-if (type === "from" && query === from) {
-  setFromSuggestions(filtered);
-}
+    const filtered = data.filter((item: any) => {
+      const words = item.display_name.toLowerCase().split(" ");
+      return words.some((word: string) => word.startsWith(queryLower));
+    });
 
-if (type === "to" && query === to) {
-  setToSuggestions(filtered);
-}
+    if (type === "from" && query === from) {
+      setFromSuggestions(filtered);
+    }
+
+    if (type === "to" && query === to) {
+      setToSuggestions(filtered);
+    }
 
   } catch (err) {
     console.log(err);
@@ -189,25 +190,21 @@ if (type === "to" && query === to) {
         <div className="max-w-lg mx-auto bg-white p-6 sm:p-8 rounded-2xl shadow-xl border border-gray-200">
 
           {/* FROM */}
-<div className="relative mb-5">
 
-  {/* NEW GOOGLE STYLE INPUT */}
-  <div className="border-2 border-black rounded-lg p-4 bg-gray-200 flex items-start gap-3">
 
-  {/* ICON */}
-  <div className="text-gray-600 text-xl mt-1">📍</div>
+    <div className="relative mb-5">
 
-  {/* TEXT */}
-  <div className="flex flex-col w-full leading-tight">
+  <div className="border-2 border-black rounded-lg p-4 bg-gray-200 flex flex-col">
 
-    <span className="text-xs font-semibold text-black">From</span>
+    <span className="text-xs text-gray-600">
+      {from ? "From" : ""}
+    </span>
 
     <input
       ref={fromInputRef}
-      className="bg-transparent outline-none text-base text-gray-800"
-      placeholder="Pickup location"
+      className="bg-transparent outline-none text-base"
+      placeholder={from ? "" : "Pickup location"}
       value={from}
-
       onChange={(e) => {
         const value = e.target.value;
 
@@ -222,9 +219,9 @@ if (type === "to" && query === to) {
         }, 400);
       }}
     />
+
   </div>
 
-</div>
 
   {fromSuggestions.length > 0 && (
     <div className="absolute w-full bg-white border shadow-lg rounded-xl max-h-60 overflow-y-auto z-20">
@@ -257,76 +254,69 @@ if (type === "to" && query === to) {
   )}
 </div>
 
-
 {/* TO */}
 <div className="relative mb-5">
 
-  <div className="border-2 border-black rounded-lg p-4 bg-gray-200 flex items-start gap-3">
+  <div className="border-2 border-black rounded-lg p-4 bg-gray-200 flex flex-col">
 
-    {/* ICON */}
-    <div className="text-gray-600 text-xl mt-1">📍</div>
+    <span className="text-xs font-semibold text-black">
+      {to ? "To" : ""}
+    </span>
 
-    {/* TEXT */}
-    <div className="flex flex-col w-full leading-tight">
+    <input
+      ref={toInputRef}
+      className="bg-transparent outline-none text-base text-gray-800"
+      placeholder={to ? "" : "Drop location"}
+      value={to}
 
-      <span className="text-xs font-semibold text-black">To</span>
+      onChange={(e) => {
+        const value = e.target.value;
 
-      <input
-        ref={toInputRef}
-        className="bg-transparent outline-none text-base text-gray-800"
-        placeholder="Drop location"
-        value={to}
+        setTo(value);
+        setToCoords(null);
+        setToSuggestions([]);
 
-        onChange={(e) => {
-          const value = e.target.value;
+        clearTimeout(toDebounceRef.current);
 
-          setTo(value);
-          setToCoords(null);
-          setToSuggestions([]);
-
-          clearTimeout(toDebounceRef.current);
-
-          toDebounceRef.current = setTimeout(() => {
-            searchLocation(value, "to");
-          }, 400);
-        }}
-      />
-    </div>
-
+        toDebounceRef.current = setTimeout(() => {
+          searchLocation(value, "to");
+        }, 400);
+      }}
+    />
   </div>
 
+  {/* ✅ ADD DROPDOWN HERE */}
+  {toSuggestions.length > 0 && (
+    <div className="absolute w-full bg-white border shadow-lg rounded-lg mt-1 max-h-60 overflow-y-auto z-10">
+
+      {toSuggestions.map((item, i) => {
+        const name = item.display_name.split(",")[0];
+        const address = item.display_name.split(",").slice(1, 4).join(",");
+
+        return (
+          <div
+            key={i}
+            className="flex items-start gap-3 p-3 hover:bg-gray-100 cursor-pointer border-b last:border-none"
+            onMouseDown={() => {
+              setTo(item.display_name);
+              setToCoords(item);
+              setToSuggestions([]);
+            }}
+          >
+            <div className="text-gray-500 text-lg mt-1">📍</div>
+
+            <div>
+              <div className="font-medium text-sm">{name}</div>
+              <div className="text-xs text-gray-500">{address}</div>
+            </div>
+          </div>
+        );
+      })}
+
+    </div>
+  )}
 
   
-
-   {toSuggestions.length > 0 && (
-  <div className="absolute w-full bg-white border shadow-lg rounded-lg max-h-60 overflow-y-auto z-10">
-    {toSuggestions.map((item, i) => {
-      const name = item.display_name.split(",")[0];
-      const address = item.display_name.split(",").slice(1, 4).join(",");
-
-      return (
-        <div
-          key={i}
-          className="flex items-start gap-3 p-3 hover:bg-gray-100 cursor-pointer border-b last:border-none"
-          onMouseDown={() => {
-            setTo(item.display_name);
-            setToCoords(item);
-            setToSuggestions([]);
-          }}
-          
-        >
-          
-          <div className="text-gray-500 text-lg mt-1">📍</div>
-
-          <div>
-            <div className="font-medium text-sm">{name}</div>
-            <div className="text-xs text-gray-500">{address}</div>
-          </div>
-        </div>
-      );
-    })}
- </div>
-)}
 
 </div>   // ✅ ADD THIS (this closes "relative mb-5")
 
