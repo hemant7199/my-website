@@ -4,8 +4,11 @@ import { useState } from "react";
 import Navbar from "../components/Navbar";
 import { getCoordinates, getDistance } from "../utils/maps";
 import { useLanguage } from "../utils/LanguageContext";
+import { useRef } from "react";
 
 export default function Home() {
+
+  const latestQueryRef = useRef("");
 
   const lang = useLanguage();
   const t = typeof lang?.t === "function" ? lang.t : (text: string) => text;
@@ -33,7 +36,8 @@ const searchLocation = async (query: string, type: "from" | "to") => {
 
   const trimmedQuery = query.trim();
 
-  if (trimmedQuery.length === 0) {
+  // minimum 2 chars
+  if (trimmedQuery.length < 2) {
     if (type === "from") {
       setFromSuggestions([]);
       setFromCoords(null);
@@ -43,6 +47,9 @@ const searchLocation = async (query: string, type: "from" | "to") => {
     }
     return;
   }
+
+  // ✅ track latest query
+  latestQueryRef.current = trimmedQuery;
 
   let currentController = type === "from" ? fromController : toController;
 
@@ -63,6 +70,9 @@ const searchLocation = async (query: string, type: "from" | "to") => {
     );
 
     const data = await res.json();
+
+    // ❗ ignore old responses
+    if (latestQueryRef.current !== trimmedQuery) return;
 
     if (type === "from") {
       setFromSuggestions(data);
