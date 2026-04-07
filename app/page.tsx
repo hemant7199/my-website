@@ -2,7 +2,6 @@
 import Image from "next/image";
 import { useState } from "react";
 import Navbar from "../components/Navbar";
-import { getCoordinates, getDistance } from "../utils/maps";
 import { useLanguage } from "../utils/LanguageContext";
 import { useRef } from "react";
 
@@ -33,115 +32,44 @@ export default function Home() {
 const [toController, setToController] = useState<AbortController | null>(null);
 
 const searchLocation = async (query: string, type: "from" | "to") => {
-
   const trimmedQuery = query.trim();
 
-  // minimum 2 characters
-  if (trimmedQuery.length < 2) {
-  latestQueryRef.current = "";   // 🔥 reset query
-
-  if (type === "from") {
-    setFromSuggestions([]);
-    setFromCoords(null);
-  } else {
-    setToSuggestions([]);
-    setToCoords(null);
+  if (trimmedQuery.length < 1) {
+    if (type === "from") setFromSuggestions([]);
+    else setToSuggestions([]);
+    return;
   }
-  return;
-}
 
-  // track latest query
   latestQueryRef.current = trimmedQuery;
 
   let currentController = type === "from" ? fromController : toController;
-
   if (currentController) currentController.abort();
 
   const newController = new AbortController();
 
-  if (type === "from") {
-    setFromController(newController);
-  } else {
-    setToController(newController);
-  }
+  if (type === "from") setFromController(newController);
+  else setToController(newController);
 
   try {
     const res = await fetch(
-  `https://nominatim.openstreetmap.org/search?format=json&q=${trimmedQuery}, Spain&addressdetails=1&limit=5`,
-  {
-    signal: newController.signal,
-    headers: {
-      "User-Agent": "cab-booking-app",
-      "Accept-Language": "en",
-    },
-  }
-);
+      `https://nominatim.openstreetmap.org/search?format=json&q=${trimmedQuery}&countrycodes=es&limit=5`,
+      {
+        signal: newController.signal,
+        headers: {
+          "User-Agent": "cab-app",
+        },
+      }
+    );
 
-    let data = await res.json();
+    const data = await res.json();
 
-// 🔥 fallback if no result
-if (data.length === 0) {
-  const res2 = await fetch(
-    `https://nominatim.openstreetmap.org/search?format=json&q=${trimmedQuery}&limit=5`,
-    {
-      headers: {
-        "User-Agent": "cab-booking-app",
-        "Accept-Language": "en",
-      },
-    }
-  );
-  data = await res2.json();
-}
-
-    // 🔥 SORTING LOGIC (BEST)
-    const sortedData = data.sort((a: any, b: any) => {
-
-      const query = trimmedQuery.toLowerCase();
-
-      const aCity = (a.name || a.display_name).toLowerCase();
-      const bCity = (b.name || b.display_name).toLowerCase();
-
-      // ⭐ EXACT MATCH
-      if (aCity === query) return -1;
-      if (bCity === query) return 1;
-
-      // ⭐ STARTS WITH
-      if (aCity.startsWith(query) && !bCity.startsWith(query)) return -1;
-      if (bCity.startsWith(query) && !aCity.startsWith(query)) return 1;
-
-      // ⭐ WORD MATCH
-      const aWords = aCity.split(" ");
-      const bWords = bCity.split(" ");
-
-      const aWordMatch = aWords.some((w: string) => w.startsWith(query));
-      const bWordMatch = bWords.some((w: string) => w.startsWith(query));
-
-      if (aWordMatch && !bWordMatch) return -1;
-      if (bWordMatch && !aWordMatch) return 1;
-
-      // ⭐ SHORTER NAME PRIORITY
-      if (aCity.length !== bCity.length) return aCity.length - bCity.length;
-
-      // ⭐ INCLUDES
-      if (aCity.includes(query) && !bCity.includes(query)) return -1;
-      if (bCity.includes(query) && !aCity.includes(query)) return 1;
-
-      return 0;
-    });
-
-    // ❗ ignore old responses
     if (latestQueryRef.current !== trimmedQuery) return;
 
-    if (type === "from") {
-      setFromSuggestions(sortedData);
-    } else {
-      setToSuggestions(sortedData);
-    }
+    if (type === "from") setFromSuggestions(data);
+    else setToSuggestions(data);
 
   } catch (err: any) {
-    if (err.name !== "AbortError") {
-      console.log(err);
-    }
+    if (err.name !== "AbortError") console.log(err);
   }
 };
 
@@ -153,10 +81,6 @@ if (data.length === 0) {
       return;
     }
 
-    if (!from || (tab === "oneway" && !to)) {
-      alert("Enter locations");
-      return;
-    }
 
     if (from === to) {
       alert("❌ Pickup and Drop cannot be same");
@@ -175,13 +99,10 @@ if (data.length === 0) {
       let fromData = fromCoords;
       let toData = tab === "oneway" ? toCoords : fromCoords;
 
-      if (!fromData) fromData = await getCoordinates(from);
-      if (!toData) toData = await getCoordinates(to);
-
       if (!fromData || !toData) {
-        alert("Invalid location");
-        return;
-      }
+  alert("Please select location from suggestions");
+  return;
+}
 
       if (!fromData.display_name?.includes("Spain")) {
         alert("❌ Pickup must be in Spain");
@@ -208,7 +129,7 @@ if (data.length === 0) {
       window.location.href = "/cars";
 
     } catch (err) {
-      alert("Error calculating price");
+      alert("Please choose the correct destination. If you face any issue, contact us on WhatsApp.");
     } finally {
       setSearching(false);
     }
@@ -276,7 +197,6 @@ if (data.length === 0) {
 
   setFrom(value);
   setFromCoords(null);
-  setFromSuggestions([]);   // 🔥 reset immediately
   searchLocation(value, "from");
 }}
             />
@@ -287,11 +207,11 @@ if (data.length === 0) {
                   <div
                     key={i}
                     className="p-2 hover:bg-gray-100 cursor-pointer"
-                    onClick={() => {
-                      setFrom(item.display_name);
-                      setFromCoords(item);
-                      setFromSuggestions([]);
-                    }}
+                  onClick={() => {
+  setFrom(item.display_name);
+  setFromCoords(item);
+  setFromSuggestions([]);
+}}
                   >
                     📍 {item.display_name}
                   </div>
@@ -312,7 +232,6 @@ if (data.length === 0) {
 
   setTo(value);
   setToCoords(null);
-  setToSuggestions([]);   // 🔥 reset immediately
   searchLocation(value, "to");
 }}
               />
@@ -324,10 +243,11 @@ if (data.length === 0) {
                       key={i}
                       className="p-2 hover:bg-gray-100 cursor-pointer"
                       onClick={() => {
-                        setTo(item.display_name);
-                        setToCoords(item);
-                        setToSuggestions([]);
-                      }}
+  setTo(item.display_name);
+  setToCoords(item);
+  setToSuggestions([]);
+}} // ✅ close dropdown
+
                     >
                       📍 {item.display_name}
                     </div>
