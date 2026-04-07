@@ -38,15 +38,17 @@ const searchLocation = async (query: string, type: "from" | "to") => {
 
   // minimum 2 characters
   if (trimmedQuery.length < 2) {
-    if (type === "from") {
-      setFromSuggestions([]);
-      setFromCoords(null);
-    } else {
-      setToSuggestions([]);
-      setToCoords(null);
-    }
-    return;
+  latestQueryRef.current = "";   // 🔥 reset query
+
+  if (type === "from") {
+    setFromSuggestions([]);
+    setFromCoords(null);
+  } else {
+    setToSuggestions([]);
+    setToCoords(null);
   }
+  return;
+}
 
   // track latest query
   latestQueryRef.current = trimmedQuery;
@@ -65,17 +67,31 @@ const searchLocation = async (query: string, type: "from" | "to") => {
 
   try {
     const res = await fetch(
-      `https://nominatim.openstreetmap.org/search?format=json&q=${trimmedQuery}, Spain&addressdetails=1&limit=5`,
-      {
-        signal: newController.signal,
-        headers: {
-          "User-Agent": "cab-booking-app",
-          "Accept-Language": "en",
-        },
-      }
-    );
+  `https://nominatim.openstreetmap.org/search?format=json&q=${trimmedQuery}, Spain&addressdetails=1&limit=5`,
+  {
+    signal: newController.signal,
+    headers: {
+      "User-Agent": "cab-booking-app",
+      "Accept-Language": "en",
+    },
+  }
+);
 
-    const data = await res.json();
+    let data = await res.json();
+
+// 🔥 fallback if no result
+if (data.length === 0) {
+  const res2 = await fetch(
+    `https://nominatim.openstreetmap.org/search?format=json&q=${trimmedQuery}&limit=5`,
+    {
+      headers: {
+        "User-Agent": "cab-booking-app",
+        "Accept-Language": "en",
+      },
+    }
+  );
+  data = await res2.json();
+}
 
     // 🔥 SORTING LOGIC (BEST)
     const sortedData = data.sort((a: any, b: any) => {
@@ -235,7 +251,7 @@ const searchLocation = async (query: string, type: "from" | "to") => {
   href="https://wa.me/34632069135"
   target="_blank"
   rel="noopener noreferrer"
-  className="w-full flex items-center justify-center border-2 border-black bg-white text-black py-3 rounded-lg font-medium hover:bg-gray-100 transition text-sm sm:text-base md:text-lg lg:text-xl whitespace-nowrap"
+  className="w-full flex items-center justify-center border-2 border-black bg-white text-black py-3 rounded-lg font-semibold hover:bg-gray-100 transition text-[clamp(16px,2.5vw,24px)] whitespace-nowrap"
 >
   WhatsApp
 </a>
@@ -259,7 +275,8 @@ const searchLocation = async (query: string, type: "from" | "to") => {
   const value = e.target.value;
 
   setFrom(value);
-  setFromCoords(null);   // reset old selection
+  setFromCoords(null);
+  setFromSuggestions([]);   // 🔥 reset immediately
   searchLocation(value, "from");
 }}
             />
@@ -294,7 +311,8 @@ const searchLocation = async (query: string, type: "from" | "to") => {
   const value = e.target.value;
 
   setTo(value);
-  setToCoords(null);   // reset old selection
+  setToCoords(null);
+  setToSuggestions([]);   // 🔥 reset immediately
   searchLocation(value, "to");
 }}
               />
