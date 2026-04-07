@@ -7,7 +7,6 @@ import { useRef } from "react";
 
 export default function Home() {
 
-  const latestQueryRef = useRef("");
 
   const lang = useLanguage();
   const t = typeof lang?.t === "function" ? lang.t : (text: string) => text;
@@ -40,7 +39,6 @@ const searchLocation = async (query: string, type: "from" | "to") => {
     return;
   }
 
-  latestQueryRef.current = trimmedQuery;
 
   let currentController = type === "from" ? fromController : toController;
   if (currentController) currentController.abort();
@@ -63,7 +61,7 @@ const searchLocation = async (query: string, type: "from" | "to") => {
 
     const data = await res.json();
 
-    if (latestQueryRef.current !== trimmedQuery) return;
+    
 
     if (type === "from") setFromSuggestions(data);
     else setToSuggestions(data);
@@ -234,6 +232,7 @@ const searchLocation = async (query: string, type: "from" | "to") => {
   setToCoords(null);
   searchLocation(value, "to");
 }}
+  
               />
 
               {toSuggestions.length > 0 && (
@@ -242,12 +241,11 @@ const searchLocation = async (query: string, type: "from" | "to") => {
                     <div
                       key={i}
                       className="p-2 hover:bg-gray-100 cursor-pointer"
-                      onClick={() => {
+                     onClick={() => {
   setTo(item.display_name);
   setToCoords(item);
   setToSuggestions([]);
-}} // ✅ close dropdown
-
+}}
                     >
                       📍 {item.display_name}
                     </div>
