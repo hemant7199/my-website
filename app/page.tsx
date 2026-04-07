@@ -36,6 +36,7 @@ const searchLocation = async (query: string, type: "from" | "to") => {
 
   const trimmedQuery = query.trim();
 
+  // minimum 2 characters
   if (trimmedQuery.length < 2) {
     if (type === "from") {
       setFromSuggestions([]);
@@ -47,6 +48,7 @@ const searchLocation = async (query: string, type: "from" | "to") => {
     return;
   }
 
+  // track latest query
   latestQueryRef.current = trimmedQuery;
 
   let currentController = type === "from" ? fromController : toController;
@@ -75,12 +77,49 @@ const searchLocation = async (query: string, type: "from" | "to") => {
 
     const data = await res.json();
 
+    // 🔥 SORTING LOGIC (BEST)
+    const sortedData = data.sort((a: any, b: any) => {
+
+      const query = trimmedQuery.toLowerCase();
+
+      const aCity = (a.name || a.display_name).toLowerCase();
+      const bCity = (b.name || b.display_name).toLowerCase();
+
+      // ⭐ EXACT MATCH
+      if (aCity === query) return -1;
+      if (bCity === query) return 1;
+
+      // ⭐ STARTS WITH
+      if (aCity.startsWith(query) && !bCity.startsWith(query)) return -1;
+      if (bCity.startsWith(query) && !aCity.startsWith(query)) return 1;
+
+      // ⭐ WORD MATCH
+      const aWords = aCity.split(" ");
+      const bWords = bCity.split(" ");
+
+      const aWordMatch = aWords.some((w: string) => w.startsWith(query));
+      const bWordMatch = bWords.some((w: string) => w.startsWith(query));
+
+      if (aWordMatch && !bWordMatch) return -1;
+      if (bWordMatch && !aWordMatch) return 1;
+
+      // ⭐ SHORTER NAME PRIORITY
+      if (aCity.length !== bCity.length) return aCity.length - bCity.length;
+
+      // ⭐ INCLUDES
+      if (aCity.includes(query) && !bCity.includes(query)) return -1;
+      if (bCity.includes(query) && !aCity.includes(query)) return 1;
+
+      return 0;
+    });
+
+    // ❗ ignore old responses
     if (latestQueryRef.current !== trimmedQuery) return;
 
     if (type === "from") {
-      setFromSuggestions(data);
+      setFromSuggestions(sortedData);
     } else {
-      setToSuggestions(data);
+      setToSuggestions(sortedData);
     }
 
   } catch (err: any) {
@@ -89,6 +128,7 @@ const searchLocation = async (query: string, type: "from" | "to") => {
     }
   }
 };
+
 
   const calculatePrice = async () => {
 
