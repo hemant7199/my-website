@@ -6,8 +6,8 @@ import { useLanguage } from "../utils/LanguageContext";
 import { useRef } from "react";
 
 export default function Home() {
-
-
+  const cacheRef = useRef<any>({});
+  const debounceRef = useRef<any>(null);
   const lang = useLanguage();
   const t = typeof lang?.t === "function" ? lang.t : (text: string) => text;
 
@@ -33,7 +33,7 @@ const [toController, setToController] = useState<AbortController | null>(null);
 const searchLocation = async (query: string, type: "from" | "to") => {
   const trimmedQuery = query.trim();
 
-  if (trimmedQuery.length < 1) {
+  if (trimmedQuery.length < 2) {
     if (type === "from") setFromSuggestions([]);
     else setToSuggestions([]);
     return;
@@ -48,10 +48,17 @@ const searchLocation = async (query: string, type: "from" | "to") => {
   if (type === "from") setFromController(newController);
   else setToController(newController);
 
+  // ✅ check cache first
+if (cacheRef.current[trimmedQuery]) {
+  if (type === "from") setFromSuggestions(cacheRef.current[trimmedQuery]);
+  else setToSuggestions(cacheRef.current[trimmedQuery]);
+  return;
+}
+
   try {
     const res = await fetch(
-      `https://nominatim.openstreetmap.org/search?format=json&q=${trimmedQuery}&countrycodes=es&limit=5`,
-      {
+      `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(trimmedQuery)}&countrycodes=es&limit=5`,
+  {
         signal: newController.signal,
         headers: {
           "User-Agent": "cab-app",
@@ -60,6 +67,7 @@ const searchLocation = async (query: string, type: "from" | "to") => {
     );
 
     const data = await res.json();
+    cacheRef.current[trimmedQuery] = data;
 
     
 
@@ -195,7 +203,11 @@ const searchLocation = async (query: string, type: "from" | "to") => {
 
   setFrom(value);
   setFromCoords(null);
+if (debounceRef.current) clearTimeout(debounceRef.current);
+
+debounceRef.current = setTimeout(() => {
   searchLocation(value, "from");
+}, 700); // 🔥 delay
 }}
             />
 
@@ -230,7 +242,12 @@ const searchLocation = async (query: string, type: "from" | "to") => {
 
   setTo(value);
   setToCoords(null);
-  searchLocation(value, "to");
+
+  if (debounceRef.current) clearTimeout(debounceRef.current);
+
+  debounceRef.current = setTimeout(() => {
+    searchLocation(value, "to");
+  }, 700);
 }}
   
               />

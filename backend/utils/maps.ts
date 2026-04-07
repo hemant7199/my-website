@@ -3,7 +3,7 @@ export const searchPlaces = async (query: string) => {
 
   try {
     const res = await fetch(
-      `https://nominatim.openstreetmap.org/search?format=json&q=${query}&countrycodes=es&limit=5`,
+      `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&countrycodes=es&limit=5`,
       {
         headers: {
           "User-Agent": "cab-app",
@@ -11,9 +11,11 @@ export const searchPlaces = async (query: string) => {
       }
     );
 
+    if (!res.ok) return [];
+
     const data = await res.json();
 
-    return data; // 🔥 full list (not data[0])
+    return data;
 
   } catch {
     return [];
