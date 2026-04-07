@@ -232,13 +232,13 @@ const searchLocation = async (query: string, type: "from" | "to") => {
       <p>📧 blackline402@gmail.com</p>
 
       <a
-        href="https://wa.me/34632069135"
-        target="_blank"
-        rel="noopener noreferrer"
-        className="w-full flex items-center justify-center border-2 border-black bg-white text-black py-3 rounded-lg text-sm sm:text-base font-medium hover:bg-gray-100 transition"
-      >
-        WhatsApp
-      </a>
+  href="https://wa.me/34632069135"
+  target="_blank"
+  rel="noopener noreferrer"
+  className="w-full flex items-center justify-center border-2 border-black bg-white text-black py-3 rounded-lg font-medium hover:bg-gray-100 transition text-sm sm:text-base md:text-lg lg:text-xl whitespace-nowrap"
+>
+  WhatsApp
+</a>
     </div>
 
   </div>
