@@ -138,190 +138,199 @@ if (type === "to" && query === to) {
     }
   };
 
-  return (
-    <div className="min-h-screen w-full overflow-x-hidden bg-gradient-to-br from-gray-100 via-white to-gray-200">
+ return (
+  <div className="min-h-screen w-full overflow-x-hidden bg-gradient-to-br from-gray-100 via-white to-gray-200">
 
-      <Navbar />
-      <div className="h-20"></div>
+    <Navbar />
+    <div className="h-20"></div>
 
-      {/* HERO IMAGE WITH TEXT */}
-<div className="relative w-full">
+    {/* HERO */}
+    <div className="relative w-full">
 
+      <Image
+        src="/images/cust.png"
+        width={1200}
+        height={500}
+        alt="hero"
+        className="w-full h-[260px] sm:h-[320px] md:h-[420px] object-cover"
+      />
 
-  <Image
-    src="/images/cust.png"
-    width={1200}
-    height={500}
-    alt="hero"
-    className="w-full h-[260px] sm:h-[320px] md:h-[420px] object-cover"
-  />
+      <div className="absolute inset-0 bg-black/40"></div>
 
-  <div className="absolute inset-0 bg-black/40"></div>
+      <div className="absolute inset-0 flex flex-col justify-center items-center text-white text-center px-4">
 
-  <div className="absolute inset-0 flex flex-col justify-center items-center text-white text-center px-4">
+        <h1 className="text-2xl sm:text-3xl md:text-5xl font-bold mb-3">
+          Premium Chauffeur Service
+        </h1>
 
-    <h1 className="text-2xl sm:text-3xl md:text-5xl font-bold mb-3">
-      Premium Chauffeur Service
-    </h1>
+        <p className="text-sm md:text-lg mb-3">
+          Travel in comfort across Spain
+        </p>
 
-    <p className="text-sm md:text-lg mb-3">
-      Travel in comfort across Spain
-    </p>
+        <div className="flex flex-col items-center gap-2 text-sm md:text-base">
+          <p>📞 +34 632 069 135</p>
+          <p>📧 blackline402@gmail.com</p>
 
-    <div className="flex flex-col items-center gap-2 text-sm md:text-base">
+          <a
+            href="https://wa.me/34632069135"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="w-full flex items-center justify-center border-2 border-black bg-white text-black py-3 rounded-lg text-sm sm:text-base font-medium hover:bg-gray-100 transition"
+          >
+            WhatsApp
+          </a>
+        </div>
 
-  <p>📞 +34 632 069 135</p>
-
-  <p>📧 blackline402@gmail.com</p>
-
-  {/* ✅ WhatsApp Rectangle Button */}
-  <a
-  href="https://wa.me/34632069135"
-  target="_blank"
-  rel="noopener noreferrer"
-  className="w-full flex items-center justify-center gap-2 border-2 border-black bg-white text-black py-3 rounded-lg text-sm sm:text-base font-medium hover:bg-gray-100 transition"
->
-  <Image
-    src="/images/whata.png"
-    width={20}
-    height={20}
-    alt="whatsapp"
-  />
-  WhatsApp
-</a>
-
-</div>
-
-  </div>
-  </div>
-      
-      
+      </div>
+    </div>
 
       {/* BOOKING CARD */}
       <div className="mt-8 md:mt-12 px-4">
         <div className="max-w-lg mx-auto bg-white p-6 sm:p-8 rounded-2xl shadow-xl border border-gray-200">
 
           {/* FROM */}
-          <div className="relative mb-5">
-            <input
-  ref={fromInputRef}   // ✅ ADD
-  className="w-full border-2 border-black p-3 rounded-lg outline-none text-sm sm:text-base"
-  placeholder="Pickup location"
-  value={from}
+<div className="relative mb-5">
 
-  onKeyDown={(e) => {
-  if (e.key === "Enter") {
-    e.preventDefault();
+  {/* NEW GOOGLE STYLE INPUT */}
+  <div className="border-2 border-black rounded-lg p-4 bg-gray-200 flex items-start gap-3">
 
-    // ✅ If suggestions exist → select first
-    if (fromSuggestions.length > 0) {
-      const item = fromSuggestions[0];
-      setFrom(item.display_name);
-      setFromCoords(item);
-      setFromSuggestions([]);
-    } else {
-      // ✅ Otherwise move to next input
-      toInputRef.current?.focus();
-    }
-  }
-}}
-  onChange={(e) => {
-    const value = e.target.value;
+  {/* ICON */}
+  <div className="text-gray-600 text-xl mt-1">📍</div>
 
-    setFrom(value);
-    setFromCoords(null);
-    setFromSuggestions([]);
+  {/* TEXT */}
+  <div className="flex flex-col w-full leading-tight">
 
-    clearTimeout(fromDebounceRef.current);
+    <span className="text-xs font-semibold text-black">From</span>
 
-    fromDebounceRef.current = setTimeout(() => {
-      searchLocation(value, "from");
-    }, 400);
-  }}
-/>
+    <input
+      ref={fromInputRef}
+      className="bg-transparent outline-none text-base text-gray-800"
+      placeholder="Pickup location"
+      value={from}
 
-            {fromSuggestions.length > 0 && (
-              <div className="absolute w-full bg-white border shadow max-h-40 overflow-y-auto z-10">
-                {fromSuggestions.map((item, i) => (
-                  <div
-                    key={i}
-                    className="p-2 hover:bg-gray-100 cursor-pointer"
-                    onMouseDown={() => {
-                      setFrom(item.display_name);
-                      setFromCoords(item);
-                      setFromSuggestions([]);
-                    }}
-                  >
-                    {item.display_name.split(",").slice(0, 3).join(", ")}
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
+      onChange={(e) => {
+        const value = e.target.value;
 
-          {/* TO */}
-          {tab === "oneway" && (
-            <div className="relative mb-5">
-              <input
-  ref={toInputRef}   // ✅ ADD
-  className="w-full border-2 border-black p-3 rounded-lg outline-none text-sm sm:text-base"
-  placeholder="Drop location"
-  value={to}
+        setFrom(value);
+        setFromCoords(null);
+        setFromSuggestions([]);
 
-  onKeyDown={(e) => {
-  if (e.key === "Enter") {
-    e.preventDefault();
+        clearTimeout(fromDebounceRef.current);
 
-    // ✅ If suggestions exist → select first
-    if (toSuggestions.length > 0) {
-      const item = toSuggestions[0];
-      setTo(item.display_name);
-      setToCoords(item);
-      setToSuggestions([]);
-    } else {
-      // ✅ Otherwise move to Date
-      dateInputRef.current?.focus();
-    }
-  }
-}}
+        fromDebounceRef.current = setTimeout(() => {
+          searchLocation(value, "from");
+        }, 400);
+      }}
+    />
+  </div>
 
-  onChange={(e) => {
-    const value = e.target.value;
+</div>
 
-    setTo(value);
-    setToCoords(null);
-    setToSuggestions([]);
+  {fromSuggestions.length > 0 && (
+    <div className="absolute w-full bg-white border shadow-lg rounded-xl max-h-60 overflow-y-auto z-20">
 
-    clearTimeout(toDebounceRef.current);
+      {fromSuggestions.map((item, i) => {
+        const name = item.display_name.split(",")[0];
+        const address = item.display_name.split(",").slice(1, 4).join(",");
 
-    toDebounceRef.current = setTimeout(() => {
-      searchLocation(value, "to");
-    }, 400);
-  }}
-/>
+        return (
+          <div
+            key={i}
+            className="flex items-start gap-3 p-3 hover:bg-gray-100 cursor-pointer border-b last:border-none transition"
+            onMouseDown={() => {
+              setFrom(item.display_name);
+              setFromCoords(item);
+              setFromSuggestions([]);
+            }}
+          >
+            <div className="text-gray-500 text-lg mt-1">📍</div>
 
-              {toSuggestions.length > 0 && (
-                <div className="absolute w-full bg-white border shadow max-h-40 overflow-y-auto z-10">
-                  {toSuggestions.map((item, i) => (
-                    <div
-                      key={i}
-                      className="p-2 hover:bg-gray-100 cursor-pointer"
-                      onMouseDown={() => {
-                        setTo(item.display_name);
-                        setToCoords(item);
-                        setToSuggestions([]);
-                      }}
-                    >
-                      {item.display_name.split(",").slice(0, 3).join(", ")}
-                    </div>
-                  ))}
-                </div>
-              )}
+            <div>
+              <div className="font-medium text-sm">{name}</div>
+              <div className="text-xs text-gray-500">{address}</div>
             </div>
-          )}
+          </div>
+        );
+      })}
 
-          {/* DATE + TIME */}
+    </div>
+  )}
+</div>
 
+
+{/* TO */}
+<div className="relative mb-5">
+
+  <div className="border-2 border-black rounded-lg p-4 bg-gray-200 flex items-start gap-3">
+
+    {/* ICON */}
+    <div className="text-gray-600 text-xl mt-1">📍</div>
+
+    {/* TEXT */}
+    <div className="flex flex-col w-full leading-tight">
+
+      <span className="text-xs font-semibold text-black">To</span>
+
+      <input
+        ref={toInputRef}
+        className="bg-transparent outline-none text-base text-gray-800"
+        placeholder="Drop location"
+        value={to}
+
+        onChange={(e) => {
+          const value = e.target.value;
+
+          setTo(value);
+          setToCoords(null);
+          setToSuggestions([]);
+
+          clearTimeout(toDebounceRef.current);
+
+          toDebounceRef.current = setTimeout(() => {
+            searchLocation(value, "to");
+          }, 400);
+        }}
+      />
+    </div>
+
+  </div>
+
+
+  
+
+   {toSuggestions.length > 0 && (
+  <div className="absolute w-full bg-white border shadow-lg rounded-lg max-h-60 overflow-y-auto z-10">
+    {toSuggestions.map((item, i) => {
+      const name = item.display_name.split(",")[0];
+      const address = item.display_name.split(",").slice(1, 4).join(",");
+
+      return (
+        <div
+          key={i}
+          className="flex items-start gap-3 p-3 hover:bg-gray-100 cursor-pointer border-b last:border-none"
+          onMouseDown={() => {
+            setTo(item.display_name);
+            setToCoords(item);
+            setToSuggestions([]);
+          }}
+          
+        >
+          
+          <div className="text-gray-500 text-lg mt-1">📍</div>
+
+          <div>
+            <div className="font-medium text-sm">{name}</div>
+            <div className="text-xs text-gray-500">{address}</div>
+          </div>
+        </div>
+      );
+    })}
+ </div>
+)}
+
+</div>   // ✅ ADD THIS (this closes "relative mb-5")
+
+{/* DATE + TIME */}
   <div className="space-y-5 mb-5">
 
   <div>
