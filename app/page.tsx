@@ -36,19 +36,17 @@ const searchLocation = async (query: string, type: "from" | "to") => {
 
   const trimmedQuery = query.trim();
 
-  // minimum 2 chars
   if (trimmedQuery.length < 2) {
-  if (type === "from") {
-    setFromSuggestions([]);
-    setFromCoords(null);
-  } else {
-    setToSuggestions([]);
-    setToCoords(null);
+    if (type === "from") {
+      setFromSuggestions([]);
+      setFromCoords(null);
+    } else {
+      setToSuggestions([]);
+      setToCoords(null);
+    }
+    return;
   }
-  return;
-}
 
-  // ✅ track latest query
   latestQueryRef.current = trimmedQuery;
 
   let currentController = type === "from" ? fromController : toController;
@@ -65,19 +63,18 @@ const searchLocation = async (query: string, type: "from" | "to") => {
 
   try {
     const res = await fetch(
-  `https://nominatim.openstreetmap.org/search?format=json&q=${trimmedQuery}&countrycodes=es&addressdetails=1&limit=5`,
-  {
-    signal: newController.signal,
-    headers: {
-      "User-Agent": "cab-booking-app",
-      "Accept-Language": "en",
-    },
-  }
-);
+      `https://nominatim.openstreetmap.org/search?format=json&q=${trimmedQuery}, Spain&addressdetails=1&limit=5`,
+      {
+        signal: newController.signal,
+        headers: {
+          "User-Agent": "cab-booking-app",
+          "Accept-Language": "en",
+        },
+      }
+    );
 
     const data = await res.json();
 
-    // ❗ ignore old responses
     if (latestQueryRef.current !== trimmedQuery) return;
 
     if (type === "from") {
