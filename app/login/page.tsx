@@ -20,42 +20,36 @@ export default function Login() {
 
 
   // ================= EMAIL CHECK =================
-  const handleEmail = async () => {
-    setError("");
+  
+   const handleEmail = () => {
+  setError("");
 
-    if (!email) return setError("Email required");
+  if (!email) return setError("Email required");
 
-    try {
-      setLoading(true);
+  setStep("password"); // ✅ instant UI
 
-      const res = await fetch(`${API_URL}/api/auth/check-email`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ email }),
-      });
+  setLoading(true);
 
-      const data = await res.json();
-
-      if (!res.ok) {
-        setError(data.message || "Error");
-        return;
-      }
-
-      if (data.exists) {
-        setStep("password");
-      } else {
+  fetch(`${API_URL}/api/auth/check-email`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ email }),
+  })
+    .then(res => res.json())
+    .then(data => {
+      if (!data.exists) {
         window.location.href = "/signup";
       }
-
-    } catch (err: any) {
-      console.error(err);
+    })
+    .catch(() => {
       setError("Cannot connect to server");
-    } finally {
+    })
+    .finally(() => {
       setLoading(false);
-    }
-  };
+    });
+};
 
   // ================= REDIRECT =================
   const handleRedirect = async () => {

@@ -5,8 +5,7 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 
 // ✅ IMPORT CORRECT FUNCTION
-const { sendOtpEmail } = require("../utils/sendEmail");
-
+const { sendOtpEmail } = require("../utils/sendEmail"); 
 
 
 // ================== 1. CHECK EMAIL ==================
@@ -56,9 +55,11 @@ router.post("/send-otp", async (req, res) => {
     await user.save();
 
     // ✅ SEND EMAIL
-    await sendOtpEmail(email, otp);
+    sendOtpEmail(email, otp).catch(err => {
+  console.log("Email error:", err);
+});
 
-    console.log("OTP:", otp); // debug
+console.log("OTP:", otp);
 
     res.json({ message: "OTP sent" });
 
@@ -213,7 +214,9 @@ router.post("/forgot-password", async (req, res) => {
     user.otp = otp;
     await user.save();
 
-    await sendOtpEmail(email, otp);
+     sendOtpEmail(email, otp).catch(err => {
+  console.log("Email error:", err);
+});
 
     console.log("RESET OTP:", otp);
 

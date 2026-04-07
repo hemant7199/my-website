@@ -1,5 +1,4 @@
 const translations: any = {
-  
   en: {
     // ===== COMMON =====
     loading: "Loading...",
@@ -13,7 +12,7 @@ const translations: any = {
     error: "Error",
     success: "Success",
 
-    // ===== NAVBAR =====
+  // ===== NAVBAR =====
     services: "Travel Services",
     overview: "Overview",
     help: "Help & Support",
@@ -34,6 +33,10 @@ const translations: any = {
     contact: "Contact Us",
     selectDateTime: "Select date & time",
     enterLocation: "Enter locations",
+    pickupSpain: "Pickup must be in Spain",
+    futureDate: "Select future date & time",
+    sameLocation: "Pickup and Drop cannot be same",
+    dropSpain: "Drop must be in Spain",
 
     // ===== CARS =====
     chooseRide: "Choose your ride",

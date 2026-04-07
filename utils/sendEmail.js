@@ -13,7 +13,7 @@ const transporter = nodemailer.createTransport({
 const sendOtpEmail = async (to, otp) => {
   try {
     await transporter.sendMail({
-      from: `"BarcaLux Chauffeur" <${process.env.EMAIL_USER}>`,
+      from: `"BLACKLINE Chauffeur" <${process.env.EMAIL_USER}>`,
       to,
       subject: "Your OTP Code 🔐",
       html: `
@@ -36,7 +36,7 @@ const sendOtpEmail = async (to, otp) => {
 const sendBookingEmail = async (to, booking) => {
   try {
     await transporter.sendMail({
-      from: `"BarcaLux Chauffeur" <${process.env.EMAIL_USER}>`,
+      from: `"BLACKLINE Chauffeur" <${process.env.EMAIL_USER}>`,
       to,
       subject: "Booking Confirmed 🚗",
       html: `
@@ -46,7 +46,7 @@ const sendBookingEmail = async (to, booking) => {
         <p><b>Time:</b> ${booking.time}</p>
         <p><b>Price:</b> €${booking.price}</p>
         <br/>
-        <p>Thank you for choosing BarcaLux Chauffeur!</p>
+        <p>Thank you for choosing BLACKLINE Chauffeur!</p>
       `,
     });
 

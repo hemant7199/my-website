@@ -15,39 +15,38 @@ export default function Forgot() {
   const [success, setSuccess] = useState("");
 
   // ✅ SEND OTP
-  const sendOtp = async () => {
-    setError("");
-    setSuccess("");
+  const sendOtp = () => {
+  setError("");
+  setSuccess("");
 
-    if (!email) return setError("Email required");
+  if (!email) return setError("Email required");
 
-    try {
-      setLoading(true);
+  setStep(2); // ✅ instant UI
 
-      const res = await fetch(`${API_URL}/api/auth/forgot-password`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ email }),
-      });
+  setLoading(true);
 
-      const data = await res.json();
-
-      if (!res.ok) {
+  fetch(`${API_URL}/api/auth/forgot-password`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ email }),
+  })
+    .then(res => res.json())
+    .then(data => {
+      if (!data.success) {
         setError(data.message || "Failed to send OTP");
-        return;
+      } else {
+        setSuccess("OTP sent to your email");
       }
-
-      setSuccess("OTP sent to your email");
-      setStep(2);
-
-    } catch {
+    })
+    .catch(() => {
       setError("Server error");
-    } finally {
+    })
+    .finally(() => {
       setLoading(false);
-    }
-  };
+    });
+};
 
   // ✅ RESET PASSWORD
   const resetPassword = async () => {

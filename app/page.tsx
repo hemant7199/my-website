@@ -1,5 +1,6 @@
 "use client";
 import Image from "next/image";
+import { useRef } from "react";
 import { useState } from "react";
 import Navbar from "../components/Navbar";
 import { getCoordinates, getDistance } from "../utils/maps";
@@ -9,6 +10,12 @@ export default function Home() {
 
   const lang = useLanguage();
   const t = typeof lang?.t === "function" ? lang.t : (text: string) => text;
+  const fromDebounceRef = useRef<any>(null);
+const toDebounceRef = useRef<any>(null);
+const timeInputRef = useRef<HTMLInputElement>(null);
+const fromInputRef = useRef<HTMLInputElement>(null);
+const toInputRef = useRef<HTMLInputElement>(null);
+const dateInputRef = useRef<HTMLInputElement>(null);
 
   const [tab, setTab] = useState<"oneway" | "hourly">("oneway");
 
@@ -29,26 +36,36 @@ export default function Home() {
 
 
   const searchLocation = async (query: string, type: "from" | "to") => {
-    if (!query) {
-      type === "from" ? setFromSuggestions([]) : setToSuggestions([]);
-      return;
-    }
+  if (!query.trim()) {
+    type === "from" ? setFromSuggestions([]) : setToSuggestions([]);
+    return;
+  }
 
-    try {
-      const res = await fetch(
-        `https://nominatim.openstreetmap.org/search?format=json&q=${query}&countrycodes=es&addressdetails=1&limit=5`
-      );
+  try {
+    const res = await fetch(
+      `https://nominatim.openstreetmap.org/search?format=json&q=${query}&countrycodes=es&addressdetails=1&limit=5&accept-language=en`
+    );
 
-      const data = await res.json();
+    const data = await res.json();
 
-      type === "from"
-        ? setFromSuggestions(data)
-        : setToSuggestions(data);
+// 🔥 FILTER: only show results starting with typed text
+const filtered = data.filter((item: any) => {
+  const name = item.display_name.split(",")[0].toLowerCase();
+  return name.startsWith(query.toLowerCase());
+});
 
-    } catch (err) {
-      console.log(err);
-    }
-  };
+if (type === "from" && query === from) {
+  setFromSuggestions(filtered);
+}
+
+if (type === "to" && query === to) {
+  setToSuggestions(filtered);
+}
+
+  } catch (err) {
+    console.log(err);
+  }
+};
 
   const calculatePrice = async () => {
 
@@ -87,15 +104,15 @@ export default function Home() {
         return;
       }
 
-      if (!fromData.display_name?.includes("Spain")) {
-        alert("❌ Pickup must be in Spain");
-        return;
-      }
+      if (fromData.address?.country_code !== "es") {
+  alert("❌ Pickup must be in Spain");
+  return;
+}
 
-      if (!toData.display_name?.includes("Spain")) {
-        alert("❌ Drop must be in Spain");
-        return;
-      }
+      if (toData.address?.country_code !== "es") {
+  alert("❌ Drop must be in Spain");
+  return;
+}
 
 
 
@@ -151,13 +168,29 @@ export default function Home() {
       Travel in comfort across Spain
     </p>
 
-    <p className="text-sm md:text-base">
-      📞 +34 632 069 135
-    </p>
+    <div className="flex flex-col items-center gap-2 text-sm md:text-base">
 
-    <p className="text-sm md:text-base">
-      📧 blackline402@gmail.com
-    </p>
+  <p>📞 +34 632 069 135</p>
+
+  <p>📧 blackline402@gmail.com</p>
+
+  {/* ✅ WhatsApp Rectangle Button */}
+  <a
+  href="https://wa.me/34632069135"
+  target="_blank"
+  rel="noopener noreferrer"
+  className="w-full flex items-center justify-center gap-2 border-2 border-black bg-white text-black py-3 rounded-lg text-sm sm:text-base font-medium hover:bg-gray-100 transition"
+>
+  <Image
+    src="/images/whata.png"
+    width={20}
+    height={20}
+    alt="whatsapp"
+  />
+  WhatsApp
+</a>
+
+</div>
 
   </div>
   </div>
@@ -171,14 +204,41 @@ export default function Home() {
           {/* FROM */}
           <div className="relative mb-5">
             <input
-              className="w-full border-2 border-black p-3 rounded-lg outline-none text-sm sm:text-base"
-              placeholder="Pickup location"
-              value={from}
-              onChange={(e) => {
-                setFrom(e.target.value);
-                searchLocation(e.target.value, "from");
-              }}
-            />
+  ref={fromInputRef}   // ✅ ADD
+  className="w-full border-2 border-black p-3 rounded-lg outline-none text-sm sm:text-base"
+  placeholder="Pickup location"
+  value={from}
+
+  onKeyDown={(e) => {
+  if (e.key === "Enter") {
+    e.preventDefault();
+
+    // ✅ If suggestions exist → select first
+    if (fromSuggestions.length > 0) {
+      const item = fromSuggestions[0];
+      setFrom(item.display_name);
+      setFromCoords(item);
+      setFromSuggestions([]);
+    } else {
+      // ✅ Otherwise move to next input
+      toInputRef.current?.focus();
+    }
+  }
+}}
+  onChange={(e) => {
+    const value = e.target.value;
+
+    setFrom(value);
+    setFromCoords(null);
+    setFromSuggestions([]);
+
+    clearTimeout(fromDebounceRef.current);
+
+    fromDebounceRef.current = setTimeout(() => {
+      searchLocation(value, "from");
+    }, 400);
+  }}
+/>
 
             {fromSuggestions.length > 0 && (
               <div className="absolute w-full bg-white border shadow max-h-40 overflow-y-auto z-10">
@@ -186,13 +246,13 @@ export default function Home() {
                   <div
                     key={i}
                     className="p-2 hover:bg-gray-100 cursor-pointer"
-                    onClick={() => {
+                    onMouseDown={() => {
                       setFrom(item.display_name);
                       setFromCoords(item);
                       setFromSuggestions([]);
                     }}
                   >
-                    📍 {item.display_name}
+                    {item.display_name.split(",").slice(0, 3).join(", ")}
                   </div>
                 ))}
               </div>
@@ -203,14 +263,42 @@ export default function Home() {
           {tab === "oneway" && (
             <div className="relative mb-5">
               <input
-                className="w-full border-2 border-black p-3 rounded-lg outline-none text-sm sm:text-base"
-                placeholder="Drop location"
-                value={to}
-                onChange={(e) => {
-                  setTo(e.target.value);
-                  searchLocation(e.target.value, "to");
-                }}
-              />
+  ref={toInputRef}   // ✅ ADD
+  className="w-full border-2 border-black p-3 rounded-lg outline-none text-sm sm:text-base"
+  placeholder="Drop location"
+  value={to}
+
+  onKeyDown={(e) => {
+  if (e.key === "Enter") {
+    e.preventDefault();
+
+    // ✅ If suggestions exist → select first
+    if (toSuggestions.length > 0) {
+      const item = toSuggestions[0];
+      setTo(item.display_name);
+      setToCoords(item);
+      setToSuggestions([]);
+    } else {
+      // ✅ Otherwise move to Date
+      dateInputRef.current?.focus();
+    }
+  }
+}}
+
+  onChange={(e) => {
+    const value = e.target.value;
+
+    setTo(value);
+    setToCoords(null);
+    setToSuggestions([]);
+
+    clearTimeout(toDebounceRef.current);
+
+    toDebounceRef.current = setTimeout(() => {
+      searchLocation(value, "to");
+    }, 400);
+  }}
+/>
 
               {toSuggestions.length > 0 && (
                 <div className="absolute w-full bg-white border shadow max-h-40 overflow-y-auto z-10">
@@ -218,13 +306,13 @@ export default function Home() {
                     <div
                       key={i}
                       className="p-2 hover:bg-gray-100 cursor-pointer"
-                      onClick={() => {
+                      onMouseDown={() => {
                         setTo(item.display_name);
                         setToCoords(item);
                         setToSuggestions([]);
                       }}
                     >
-                      📍 {item.display_name}
+                      {item.display_name.split(",").slice(0, 3).join(", ")}
                     </div>
                   ))}
                 </div>
@@ -233,32 +321,49 @@ export default function Home() {
           )}
 
           {/* DATE + TIME */}
-<div className="flex flex-col gap-4 mb-6">
 
-  {/* DATE */}
+  <div className="space-y-5 mb-5">
+
   <div>
     <label className="block text-sm font-medium mb-1">
       Date
     </label>
     <input
-      type="date"
-      className="w-full border-2 border-black p-3 rounded-lg outline-none text-sm sm:text-base"
-      value={date}
-      onChange={(e) => setDate(e.target.value)}
-    />
+  ref={dateInputRef}   // ✅ ADD
+  type="date"
+  className="w-full border-2 border-black p-3 rounded-lg outline-none text-sm sm:text-base"
+  value={date}
+
+  onKeyDown={(e) => {   // ✅ ADD
+    if (e.key === "Enter") {
+      e.preventDefault();
+      timeInputRef.current?.focus();
+    }
+  }}
+
+  onChange={(e) => setDate(e.target.value)}
+/>
   </div>
 
-  {/* TIME */}
   <div>
     <label className="block text-sm font-medium mb-1">
       Pickup Time
     </label>
     <input
-      type="time"
-      className="w-full border-2 border-black p-3 rounded-lg outline-none text-sm sm:text-base"
-      value={time}
-      onChange={(e) => setTime(e.target.value)}
-    />
+    ref={timeInputRef}
+  type="time"
+  className="w-full border-2 border-black p-3 rounded-lg outline-none text-sm sm:text-base"
+  value={time}
+
+  onKeyDown={(e) => {   // ✅ ADD
+    if (e.key === "Enter") {
+      e.preventDefault();
+      calculatePrice();
+    }
+  }}
+
+  onChange={(e) => setTime(e.target.value)}
+/>
   </div>
 
 </div>

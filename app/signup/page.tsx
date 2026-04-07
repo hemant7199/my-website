@@ -30,35 +30,34 @@ export default function Signup() {
     );
   };
 
-  const sendOtp = async () => {
-    setError("");
-    if (!email) return setError("Email required");
+  const sendOtp = () => {
+  setError("");
+  if (!email) return setError("Email required");
 
-    try {
-      setLoading(true);
+  setStep(2); // ✅ instant UI
 
-      const res = await fetch(`${API_URL}/api/auth/send-otp`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ email }),
-      });
+  setLoading(true);
 
-      const data = await res.json();
-
-      if (!res.ok) {
+  fetch(`${API_URL}/api/auth/send-otp`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ email }),
+  })
+    .then(res => res.json())
+    .then(data => {
+      if (!data.success) {
         setError(data.message);
-        return;
       }
-
-      setStep(2);
-    } catch {
+    })
+    .catch(() => {
       setError("Server error");
-    } finally {
+    })
+    .finally(() => {
       setLoading(false);
-    }
-  };
+    });
+};
 
   const verifyOtp = async () => {
     setError("");
@@ -208,6 +207,9 @@ if (!stored) {
         {step === 2 && (
           <>
             <h2 className="text-xl mb-2">Verify your email</h2>
+            <p className="text-green-600 text-sm mb-2">
+  OTP is being sent... please check your email
+</p>
             <p className="text-sm text-gray-500 mb-3">{email}</p>
 
             <input

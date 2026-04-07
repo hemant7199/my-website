@@ -12,7 +12,7 @@ const translations: any = {
     error: "Error",
     success: "Success",
 
-    // ===== NAVBAR =====
+  // ===== NAVBAR =====
     services: "Travel Services",
     overview: "Overview",
     help: "Help & Support",
@@ -33,6 +33,10 @@ const translations: any = {
     contact: "Contact Us",
     selectDateTime: "Select date & time",
     enterLocation: "Enter locations",
+    pickupSpain: "Pickup must be in Spain",
+    futureDate: "Select future date & time",
+    sameLocation: "Pickup and Drop cannot be same",
+    dropSpain: "Drop must be in Spain",
 
     // ===== CARS =====
     chooseRide: "Choose your ride",
@@ -139,13 +143,13 @@ const translations: any = {
     faq2q: "Can I cancel my booking?",
     faq2a: "Yes, free cancellation before pickup time.",
     faq3q: "Do you operate across Europe?",
-    faq3a: "Yes, BarcaLux operates in major European cities.",
+    faq3a: "Yes, BLACKLINE operates in major European cities.",
     faq4q: "How do I contact my driver?",
     faq4a: "Driver details are shared after booking.",
 
     // ===== OVERVIEW =====
     overviewTitle: "Overview",
-    overviewSub: "BarcaLux Chauffeur Service",
+    overviewSub: "BLACKLINE Chauffeur Service",
     overviewDesc:
       "Premium private rides across Europe with comfort, safety, and luxury.",
 
