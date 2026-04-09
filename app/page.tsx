@@ -273,33 +273,23 @@ debounceRef.current = setTimeout(() => {
           )}
 
           {/* DATE + TIME */}
-          <div className="flex flex-col gap-4 mb-6">
+<div className="flex flex-col sm:flex-row gap-4 mb-5">
 
-            <div>
-              <label className="block text-sm font-medium mb-1">
-                Date
-              </label>
-              <input
-                type="date"
-                className="w-full border-2 border-black p-3 rounded-lg outline-none text-sm sm:text-base"
-                value={date}
-                onChange={(e) => setDate(e.target.value)}
-              />
-            </div>
+  <input
+    type="date"
+    className="w-full border-2 border-black p-3 rounded-lg outline-none text-sm sm:text-base"
+    value={date}
+    onChange={(e) => setDate(e.target.value)}
+  />
 
-            <div>
-              <label className="block text-sm font-medium mb-1">
-                Pickup Time
-              </label>
-              <input
-                type="time"
-                className="w-full border-2 border-black p-3 rounded-lg outline-none text-sm sm:text-base"
-                value={time}
-                onChange={(e) => setTime(e.target.value)}
-              />
-            </div>
+  <input
+    type="time"
+    className="w-full border-2 border-black p-3 rounded-lg outline-none text-sm sm:text-base"
+    value={time}
+    onChange={(e) => setTime(e.target.value)}
+  />
 
-          </div>
+</div>
 
           {/* BUTTON */}
           <button
