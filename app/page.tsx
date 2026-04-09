@@ -57,7 +57,7 @@ if (cacheRef.current[trimmedQuery]) {
 
   try {
     const res = await fetch(
-      `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(trimmedQuery)}&countrycodes=es&limit=5`,
+      `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(trimmedQuery)}&countrycodes=es&addressdetails=1&limit=5`,
   {
         signal: newController.signal,
         headers: {
@@ -110,15 +110,15 @@ if (cacheRef.current[trimmedQuery]) {
   return;
 }
 
-      if (!fromData.display_name?.includes("Spain")) {
-        alert("❌ Pickup must be in Spain");
-        return;
-      }
+      if (fromData.address?.country_code !== "es") {
+  alert("❌ Pickup must be in Spain");
+  return;
+}
 
-      if (!toData.display_name?.includes("Spain")) {
-        alert("❌ Drop must be in Spain");
-        return;
-      }
+if (toData.address?.country_code !== "es") {
+  alert("❌ Drop must be in Spain");
+  return;
+}
 
       localStorage.setItem("bookingData", JSON.stringify({
         from,
@@ -212,11 +212,11 @@ debounceRef.current = setTimeout(() => {
             />
 
             {fromSuggestions.length > 0 && (
-              <div className="absolute w-full bg-white border shadow max-h-40 overflow-y-auto z-10">
+              <div className="absolute w-full bg-white border shadow max-h-40 overflow-y-auto z-10 text-black">
                 {fromSuggestions.map((item, i) => (
                   <div
                     key={i}
-                    className="p-2 hover:bg-gray-100 cursor-pointer"
+                    className="p-2 hover:bg-gray-100 cursor-pointer text-black"
                   onClick={() => {
   setFrom(item.display_name);
   setFromCoords(item);
@@ -253,11 +253,11 @@ debounceRef.current = setTimeout(() => {
               />
 
               {toSuggestions.length > 0 && (
-                <div className="absolute w-full bg-white border shadow max-h-40 overflow-y-auto z-10">
+                <div className="absolute w-full bg-white border shadow max-h-40 overflow-y-auto z-10 text-black">
                   {toSuggestions.map((item, i) => (
                     <div
                       key={i}
-                      className="p-2 hover:bg-gray-100 cursor-pointer"
+                      className="p-2 hover:bg-gray-100 cursor-pointer text-black"
                      onClick={() => {
   setTo(item.display_name);
   setToCoords(item);

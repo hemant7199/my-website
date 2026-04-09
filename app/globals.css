@@ -25,3 +25,46 @@ body {
   margin: 0;
   padding: 0;
 }
+
+/* ✅ FORCE INPUT TEXT BLACK */
+input {
+  color: #000 !important;
+  opacity: 1 !important;
+  background-color: #fff !important;
+}
+
+/* ✅ PLACEHOLDER FIX */
+input::placeholder {
+  color: #000 !important;
+  opacity: 1;
+}
+
+/* ✅ AUTOFILL FIX (IMPORTANT) */
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus {
+  -webkit-text-fill-color: #000 !important;
+  transition: background-color 9999s ease-in-out 0s;
+}
+
+/* ✅ DATE INPUT FIX */
+input[type="date"] {
+  color: #000 !important;
+}
+
+/* ✅ TIME INPUT FIX */
+input[type="time"] {
+  color: #000 !important;
+}
+
+/* ✅ EXTRA FIX FOR CHROME (DATE/TIME TEXT) */
+input[type="date"]::-webkit-datetime-edit,
+input[type="time"]::-webkit-datetime-edit {
+  color: #000 !important;
+}
+
+/* ✅ REMOVE ANY FADED LOOK */
+input[type="date"],
+input[type="time"] {
+  opacity: 1 !important;
+}
