@@ -195,7 +195,7 @@ if (cacheRef.current[trimmedQuery]) {
           {/* FROM */}
           <div className="relative mb-5">
             <input
-              className="w-full border-2 border-black p-3 rounded-lg outline-none text-sm sm:text-base"
+              className="w-full border-2 border-black p-3 rounded-lg outline-none text-sm sm:text-base text-black"
               placeholder="Pickup location"
               value={from}
               onChange={(e) => {
@@ -216,8 +216,8 @@ debounceRef.current = setTimeout(() => {
                 {fromSuggestions.map((item, i) => (
                   <div
                     key={i}
-                    className="p-2 hover:bg-gray-100 cursor-pointer"
-                  onClick={() => {
+                    className="p-2 hover:bg-gray-100 cursor-pointer text-black"
+                                      onClick={() => {
   setFrom(item.display_name);
   setFromCoords(item);
   setFromSuggestions([]);
@@ -273,21 +273,20 @@ debounceRef.current = setTimeout(() => {
           )}
 
           {/* DATE + TIME */}
-<div className="flex flex-col sm:flex-row gap-4 mb-5">
+<div className="flex flex-col gap-5 mb-5">
+  <input
+  type="date"
+  className="w-full border-2 border-black p-3 rounded-lg outline-none text-sm sm:text-base text-black"
+  value={date}
+  onChange={(e) => setDate(e.target.value)}
+/>
 
   <input
-    type="date"
-    className="w-full border-2 border-black p-3 rounded-lg outline-none text-sm sm:text-base"
-    value={date}
-    onChange={(e) => setDate(e.target.value)}
-  />
-
-  <input
-    type="time"
-    className="w-full border-2 border-black p-3 rounded-lg outline-none text-sm sm:text-base"
-    value={time}
-    onChange={(e) => setTime(e.target.value)}
-  />
+  type="time"
+  className="w-full border-2 border-black p-3 rounded-lg outline-none text-sm sm:text-base text-black"
+  value={time}
+  onChange={(e) => setTime(e.target.value)}
+/>
 
 </div>
 
@@ -334,7 +333,7 @@ debounceRef.current = setTimeout(() => {
           📞 +34 632 069 135
         </p>
 
-        <p className="text-gray-700">
+        <p className="text-black">
           📧 blackline402@gmail.com
         </p>
       </div>
