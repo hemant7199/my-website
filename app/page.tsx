@@ -195,7 +195,7 @@ if (cacheRef.current[trimmedQuery]) {
           {/* FROM */}
           <div className="relative mb-5">
             <input
-              className="w-full border-2 border-black p-3 rounded-lg outline-none text-sm sm:text-base text-black"
+            className="w-full border-2 border-black p-3 rounded-lg outline-none text-sm sm:text-base text-black placeholder-black"
               placeholder="Pickup location"
               value={from}
               onChange={(e) => {
@@ -216,8 +216,8 @@ debounceRef.current = setTimeout(() => {
                 {fromSuggestions.map((item, i) => (
                   <div
                     key={i}
-                    className="p-2 hover:bg-gray-100 cursor-pointer text-black"
-                                      onClick={() => {
+                    className="p-2 hover:bg-gray-100 cursor-pointer"
+                  onClick={() => {
   setFrom(item.display_name);
   setFromCoords(item);
   setFromSuggestions([]);
@@ -234,8 +234,8 @@ debounceRef.current = setTimeout(() => {
           {tab === "oneway" && (
             <div className="relative mb-5">
               <input
-                className="w-full border-2 border-black p-3 rounded-lg outline-none text-sm sm:text-base"
-                placeholder="Drop location"
+              className="w-full border-2 border-black p-3 rounded-lg outline-none text-sm sm:text-base text-black placeholder-black"
+              placeholder="Drop location"
                 value={to}
                 onChange={(e) => {
   const value = e.target.value;
@@ -273,24 +273,33 @@ debounceRef.current = setTimeout(() => {
           )}
 
           {/* DATE + TIME */}
-<div className="flex flex-col gap-5 mb-5">
-  <input
-  type="date"
-  style={{ colorScheme: "light" }}
-  className="w-full border-2 border-black p-3 rounded-lg outline-none text-black bg-white appearance-none [&::-webkit-calendar-picker-indicator]:invert"
-  value={date}
-  onChange={(e) => setDate(e.target.value)}
-/>
+          <div className="flex flex-col gap-4 mb-6">
 
-<input
-  type="time"
-  style={{ colorScheme: "light" }}
-  className="w-full border-2 border-black p-3 rounded-lg outline-none text-black bg-white appearance-none [&::-webkit-calendar-picker-indicator]:invert"
-  value={time}
-  onChange={(e) => setTime(e.target.value)}
-/>
+            <div>
+              <label className="block text-sm font-medium mb-1">
+                Date
+              </label>
+              <input
+                type="date"
+                className="w-full border-2 border-black p-3 rounded-lg outline-none text-sm sm:text-base"
+                value={date}
+                onChange={(e) => setDate(e.target.value)}
+              />
+            </div>
 
-</div>
+            <div>
+              <label className="block text-sm font-medium mb-1">
+                Pickup Time
+              </label>
+              <input
+                type="time"
+                className="w-full border-2 border-black p-3 rounded-lg outline-none text-sm sm:text-base"
+                value={time}
+                onChange={(e) => setTime(e.target.value)}
+              />
+            </div>
+
+          </div>
 
           {/* BUTTON */}
           <button
@@ -335,7 +344,7 @@ debounceRef.current = setTimeout(() => {
           📞 +34 632 069 135
         </p>
 
-        <p className="text-black">
+        <p className="text-gray-700">
           📧 blackline402@gmail.com
         </p>
       </div>
