@@ -276,14 +276,16 @@ debounceRef.current = setTimeout(() => {
 <div className="flex flex-col gap-5 mb-5">
   <input
   type="date"
-  className="w-full border-2 border-black p-3 rounded-lg outline-none text-sm sm:text-base text-black"
+  style={{ colorScheme: "light" }}
+  className="w-full border-2 border-black p-3 rounded-lg outline-none text-black bg-white appearance-none [&::-webkit-calendar-picker-indicator]:invert"
   value={date}
   onChange={(e) => setDate(e.target.value)}
 />
 
-  <input
+<input
   type="time"
-  className="w-full border-2 border-black p-3 rounded-lg outline-none text-sm sm:text-base text-black"
+  style={{ colorScheme: "light" }}
+  className="w-full border-2 border-black p-3 rounded-lg outline-none text-black bg-white appearance-none [&::-webkit-calendar-picker-indicator]:invert"
   value={time}
   onChange={(e) => setTime(e.target.value)}
 />
