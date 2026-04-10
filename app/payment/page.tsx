@@ -19,17 +19,19 @@ export default function Payment() {
       return;
     }
 
-    // ✅ get booking data from Details page
+    // ✅ FIX: safe localStorage read (TypeScript safe)
     let bookingData;
-    try {
-      bookingData = JSON.parse(localStorage.getItem("bookingData"));
-    } catch {
+    const stored = localStorage.getItem("bookingData");
+
+    if (!stored) {
       setError("Booking data missing");
       return;
     }
 
-    if (!bookingData) {
-      setError("Booking data not found");
+    try {
+      bookingData = JSON.parse(stored);
+    } catch {
+      setError("Invalid booking data");
       return;
     }
 
@@ -61,7 +63,7 @@ export default function Payment() {
       // ✅ save booking
       localStorage.setItem("bookingFull", JSON.stringify(data.booking));
 
-      // ✅ redirect to success page
+      // ✅ redirect
       window.location.href = "/booking-success";
 
     } catch (err) {
