@@ -4,23 +4,21 @@ import { useState } from "react";
 import { useLanguage } from "../../utils/LanguageContext";
 
 export default function Payment() {
-  const API_URL = process.env.NEXT_PUBLIC_API_URL;
   const { t } = useLanguage();
 
   const [paymentType, setPaymentType] = useState("");
   const [error, setError] = useState("");
-  const [loading, setLoading] = useState(false);
 
-  const handleBooking = async () => {
+  const handleBooking = () => {
     setError("");
 
+    // ✅ check payment selected
     if (!paymentType) {
       setError(t("selectPayment"));
       return;
     }
 
-    // ✅ FIX: safe localStorage read (TypeScript safe)
-    let bookingData;
+    // ✅ get booking data
     const stored = localStorage.getItem("bookingData");
 
     if (!stored) {
@@ -28,6 +26,7 @@ export default function Payment() {
       return;
     }
 
+    let bookingData;
     try {
       bookingData = JSON.parse(stored);
     } catch {
@@ -35,43 +34,18 @@ export default function Payment() {
       return;
     }
 
-    try {
-      setLoading(true);
+    // ✅ create final booking (frontend only)
+    const finalBooking = {
+      ...bookingData,
+      paymentType,
+      status: "confirmed",
+    };
 
-      // 💳 simulate payment success
-      alert("Payment Successful ✅");
+    // ✅ save
+    localStorage.setItem("bookingFull", JSON.stringify(finalBooking));
 
-      // ✅ create booking AFTER payment
-      const res = await fetch(`${API_URL}/api/booking/create`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          ...bookingData,
-          paymentType,
-        }),
-      });
-
-      const data = await res.json();
-
-      if (!res.ok) {
-        setError(data.message || "Booking failed");
-        return;
-      }
-
-      // ✅ save booking
-      localStorage.setItem("bookingFull", JSON.stringify(data.booking));
-
-      // ✅ redirect
-      window.location.href = "/booking-success";
-
-    } catch (err) {
-      console.log(err);
-      setError(t("serverErrorPayment"));
-    } finally {
-      setLoading(false);
-    }
+    // ✅ redirect
+    window.location.href = "/booking-success";
   };
 
   return (
@@ -134,10 +108,9 @@ export default function Payment() {
 
         <button
           onClick={handleBooking}
-          disabled={loading}
           className="w-full bg-black hover:bg-gray-800 text-white py-3 rounded-lg font-medium"
         >
-          {loading ? t("processing") : t("bookRide")}
+          {t("bookRide")}
         </button>
 
       </div>
