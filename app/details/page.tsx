@@ -38,8 +38,8 @@ export default function Details() {
     }
   }, []);
 
-  const handleNext = async () => {
-    setError("");
+const handleNext = () => {
+      setError("");
 
     if (!name || !phone || !email) {
       setError("Name, phone and email are required");
@@ -66,72 +66,13 @@ export default function Details() {
       reference,
     };
 
-    // ✅ Safe token
-    let token = null;
-    try {
-      token = localStorage.getItem("token");
-    } catch {}
+    // ✅ Save data for payment page
+  localStorage.setItem("bookingData", JSON.stringify(finalData));
 
-    if (!token) {
-      localStorage.setItem("bookingData", JSON.stringify(finalData));
-      window.location.href = "/login?redirect=save-booking";
-      return;
-    }
+  // ✅ Direct go to payment (NO LOGIN, NO API)
+  window.location.href = "/payment";
+};
 
-    try {
-      setLoading(true);
-
-      // ✅ IMPORTANT: change IP if needed
-      
-
-      console.log("Using internal API route");
-      console.log("Sending Data:", finalData);
-
-      const res = await fetch(`${API_URL}/api/booking/create`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify(finalData),
-      });
-
-      console.log("Response Status:", res.status);
-
-      // ✅ handle non-json safely
-      let data;
-      try {
-        data = await res.json();
-      } catch {
-        throw new Error("Invalid JSON response");
-      }
-
-      console.log("Response Data:", data);
-
-      if (!res.ok) {
-        setError(data.message || "Booking failed");
-        return;
-      }
-
-      if (data?.booking?._id) {
-        localStorage.setItem("bookingId", data.booking._id);
-      }
-
-      window.location.href = "/payment";
-
-    } catch (err: any) {
-      console.error("ERROR:", err);
-
-      // ✅ better error message
-      if (err.message.includes("Failed to fetch")) {
-        setError("Server connection failed");
-      } else {
-        setError("Server error: " + err.message);
-      }
-    } finally {
-      setLoading(false);
-    }
-  };
 
   return (
     <div className="min-h-screen bg-gray-50 p-4 sm:p-6">
