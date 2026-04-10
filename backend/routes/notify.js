@@ -16,16 +16,17 @@ router.post("/send-driver-email", async (req, res) => {
       return res.status(400).json({ error: "No booking data" });
     }
 
-    const FRONTEND_URL = "https://my-website-dun-xi.vercel.app";
+const FRONTEND_URL = "https://www.blacklines.es";
 
 const acceptLink = `${FRONTEND_URL}/driver-response?status=accepted&id=${booking._id}`;
 const rejectLink = `${FRONTEND_URL}/driver-response?status=rejected&id=${booking._id}`;
 
-    // ✅ SEND EMAIL USING RESEND
-    const response = await resend.emails.send({
-      from: "onboarding@resend.dev", // ⚠️ testing sender
-      to: "blackline402@gmail.com", // driver email
-      subject: "🚖 New Ride Request",
+// ✅ SEND EMAIL USING RESEND
+const response = await resend.emails.send({
+  from: "BLACKLINE <noreply@blacklines.es>", // ✅ FIXED
+  to: "blackline402@gmail.com",
+  subject: "🚖 New Ride Request",
+
       html: `
         <h2>🚖 New Ride Request</h2>
 
