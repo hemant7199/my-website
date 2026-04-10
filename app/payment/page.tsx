@@ -6,6 +6,7 @@ import { useLanguage } from "../../utils/LanguageContext";
 export default function Payment() {
   const API_URL = process.env.NEXT_PUBLIC_API_URL;
   const { t } = useLanguage();
+
   const [paymentType, setPaymentType] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
@@ -18,70 +19,49 @@ export default function Payment() {
       return;
     }
 
-    // ✅ SAFE localStorage access
-    let token = null;
-    let bookingId = null;
-
+    // ✅ get booking data from Details page
+    let bookingData;
     try {
-      token = localStorage.getItem("token");
-      bookingId = localStorage.getItem("bookingId");
-    } catch (err) {
-      console.log("localStorage error");
-    }
-
-    if (!bookingId) {
-      setError(t("bookingNotFound"));
+      bookingData = JSON.parse(localStorage.getItem("bookingData"));
+    } catch {
+      setError("Booking data missing");
       return;
     }
 
-    if (!token) {
-      setError(t("notLoggedIn"));
+    if (!bookingData) {
+      setError("Booking data not found");
       return;
     }
 
     try {
       setLoading(true);
 
-      // ✅ FIX: API fallback (CRITICAL)
-      
+      // 💳 simulate payment success
+      alert("Payment Successful ✅");
 
-      const res = await fetch(`${API_URL}/api/booking/pay/${bookingId}`, 
-        {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify({ paymentType }),
-        }
-      );
+      // ✅ create booking AFTER payment
+      const res = await fetch(`${API_URL}/api/booking/create`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          ...bookingData,
+          paymentType,
+        }),
+      });
 
-      let data;
-
-try {
-  data = await res.json();
-} catch {
-  setError("Invalid server response");
-  return;
-}
-      console.log("Payment Response:", data);
+      const data = await res.json();
 
       if (!res.ok) {
-        setError(data.message || t("paymentFailed"));
+        setError(data.message || "Booking failed");
         return;
       }
 
-      // ✅ SAFE SAVE
-      const booking = {
-        ...data.booking,
-        status: "waiting",
-      };
+      // ✅ save booking
+      localStorage.setItem("bookingFull", JSON.stringify(data.booking));
 
-      try {
-        localStorage.setItem("bookingFull", JSON.stringify(booking));
-      } catch {}
-
-      // ✅ REDIRECT
+      // ✅ redirect to success page
       window.location.href = "/booking-success";
 
     } catch (err) {
@@ -94,7 +74,6 @@ try {
 
   return (
     <div className="min-h-screen bg-gray-50 flex justify-center items-center p-4 sm:p-6">
-
       <div className="w-full max-w-xl bg-white p-4 sm:p-6 rounded-xl shadow">
 
         <h1 className="text-xl sm:text-2xl font-bold mb-4">
@@ -104,19 +83,20 @@ try {
         <div className="space-y-3 mb-5">
 
           {/* CARD */}
-<label className={`flex items-center gap-3 border p-3 rounded cursor-pointer ${
-  paymentType === "card" ? "border-black bg-gray-100" : ""
-}`}>
-  <input
-    type="radio"
-    name="payment"
-    value="card"
-    checked={paymentType === "card"}
-    onChange={(e) => setPaymentType(e.target.value)}
-  />
-  {t("Pay by CARD directly to driver")}
-</label>
+          <label className={`flex items-center gap-3 border p-3 rounded cursor-pointer ${
+            paymentType === "card" ? "border-black bg-gray-100" : ""
+          }`}>
+            <input
+              type="radio"
+              name="payment"
+              value="card"
+              checked={paymentType === "card"}
+              onChange={(e) => setPaymentType(e.target.value)}
+            />
+            {t("Pay by CARD directly to driver")}
+          </label>
 
+          {/* CASH */}
           <label className={`flex items-center gap-3 border p-3 rounded cursor-pointer ${
             paymentType === "cash" ? "border-black bg-gray-100" : ""
           }`}>
@@ -130,6 +110,7 @@ try {
             {t("Pay CASH directly to driver")}
           </label>
 
+          {/* UPI */}
           <label className={`flex items-center gap-3 border p-3 rounded cursor-pointer ${
             paymentType === "upi" ? "border-black bg-gray-100" : ""
           }`}>
