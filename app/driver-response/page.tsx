@@ -2,8 +2,7 @@
 
 import { Suspense, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
-const API_URL = process.env.NEXT_PUBLIC_API_URL;
-
+const API_URL = process.env.NEXT_PUBLIC_API_URL || "https://my-website-839l.onrender.com";
 function DriverContent() {
   const params = useSearchParams();
 
